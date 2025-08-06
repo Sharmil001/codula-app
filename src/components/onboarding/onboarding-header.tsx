@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import React, { useEffect } from 'react';
-import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import { cn } from '@/lib/utils';
-import { Check, Lock } from 'lucide-react';
+import React from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
+import { Check, Lock } from "lucide-react";
 
 type Step = {
   number: number;
@@ -20,25 +20,25 @@ type OnboardingHeaderProps = {
 };
 
 const steps: Step[] = [
-  { number: 1, name: 'Connect GitHub', required: true },
-  { number: 2, name: 'Select Repos', required: true },
-  { number: 3, name: 'Twitter Profile', required: false },
-  { number: 4, name: 'Skills', required: true },
+  { number: 1, name: "Connect GitHub", required: true },
+  { number: 2, name: "Select Repos", required: true },
+  { number: 3, name: "Twitter Profile", required: false },
+  { number: 4, name: "Skills", required: true },
 ];
 
-export function OnboardingHeader({ 
-  currentStep, 
-  maxAllowedStep, 
-  completedSteps, 
-  onStepClick 
+export function OnboardingHeader({
+  currentStep,
+  maxAllowedStep,
+  completedSteps,
+  onStepClick,
 }: OnboardingHeaderProps) {
   const pathname = usePathname();
-  const router = useRouter();
 
-  const allStepsCompleted = completedSteps.length === 4 && 
-    [1, 2, 3, 4].every(step => completedSteps.includes(step));
+  const allStepsCompleted =
+    completedSteps.length === 4 &&
+    [1, 2, 3, 4].every((step) => completedSteps.includes(step));
 
-  if (!pathname.startsWith('/onboarding')) return null;
+  if (!pathname.startsWith("/onboarding")) return null;
 
   if (allStepsCompleted) {
     return null;
@@ -69,34 +69,39 @@ export function OnboardingHeader({
                     <button
                       type="button"
                       onClick={() => {
-                        if (isStepAccessible(step.number) && !allStepsCompleted) {
+                        if (
+                          isStepAccessible(step.number) &&
+                          !allStepsCompleted
+                        ) {
                           onStepClick(step.number);
                         }
                       }}
-                      disabled={!isStepAccessible(step.number) || allStepsCompleted}
+                      disabled={
+                        !isStepAccessible(step.number) || allStepsCompleted
+                      }
                       className={`flex items-center ${
                         !isStepAccessible(step.number) || allStepsCompleted
-                          ? 'cursor-not-allowed opacity-50' 
-                          : 'cursor-pointer hover:opacity-80'
+                          ? "cursor-not-allowed opacity-50"
+                          : "cursor-pointer hover:opacity-80"
                       }`}
                       title={
-                        allStepsCompleted 
-                          ? 'Onboarding complete - redirecting to dashboard'
-                          : !isStepAccessible(step.number) 
-                          ? 'Complete previous steps first' 
-                          : step.name
+                        allStepsCompleted
+                          ? "Onboarding complete - redirecting to dashboard"
+                          : !isStepAccessible(step.number)
+                            ? "Complete previous steps first"
+                            : step.name
                       }
                     >
                       <span
                         className={cn(
-                          'flex h-6 w-6 items-center justify-center rounded-full mr-2 text-xs font-medium relative',
+                          "flex h-6 w-6 items-center justify-center rounded-full mr-2 text-xs font-medium relative",
                           currentStep === step.number
-                            ? 'bg-primary text-primary-foreground'
+                            ? "bg-primary text-primary-foreground"
                             : isStepCompleted(step.number)
-                            ? 'bg-green-500 text-white'
-                            : isStepAccessible(step.number)
-                            ? 'bg-muted text-muted-foreground border-2 border-primary/20'
-                            : 'bg-muted text-muted-foreground'
+                              ? "bg-green-500 text-white"
+                              : isStepAccessible(step.number)
+                                ? "bg-muted text-muted-foreground border-2 border-primary/20"
+                                : "bg-muted text-muted-foreground",
                         )}
                       >
                         {isStepCompleted(step.number) ? (
@@ -117,20 +122,22 @@ export function OnboardingHeader({
                       </span>
                     </button>
                     {index < steps.length - 1 && (
-                      <div className={cn(
-                        "mx-2 h-0.5 w-6",
-                        isStepCompleted(step.number) 
-                          ? "bg-green-500" 
-                          : currentStep > step.number 
-                          ? "bg-primary/50" 
-                          : "bg-border"
-                      )} />
+                      <div
+                        className={cn(
+                          "mx-2 h-0.5 w-6",
+                          isStepCompleted(step.number)
+                            ? "bg-green-500"
+                            : currentStep > step.number
+                              ? "bg-primary/50"
+                              : "bg-border",
+                        )}
+                      />
                     )}
                   </React.Fragment>
                 ))}
               </div>
             </div>
-            
+
             <div className="sm:hidden">
               <div className="flex items-center space-x-2">
                 <span className="text-sm text-muted-foreground">
@@ -141,14 +148,14 @@ export function OnboardingHeader({
                     <div
                       key={step.number}
                       className={cn(
-                        'h-2 w-2 rounded-full',
+                        "h-2 w-2 rounded-full",
                         currentStep === step.number
-                          ? 'bg-primary'
+                          ? "bg-primary"
                           : isStepCompleted(step.number)
-                          ? 'bg-green-500'
-                          : isStepAccessible(step.number)
-                          ? 'bg-primary/30'
-                          : 'bg-muted'
+                            ? "bg-green-500"
+                            : isStepAccessible(step.number)
+                              ? "bg-primary/30"
+                              : "bg-muted",
                       )}
                     />
                   ))}

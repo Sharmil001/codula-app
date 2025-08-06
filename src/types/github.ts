@@ -1,3 +1,12 @@
+import type { RestEndpointMethodTypes } from "@octokit/rest";
+
+export type GitHubCommitData =
+  RestEndpointMethodTypes["repos"]["listCommits"]["response"]["data"][0];
+export type GitHubPullRequest =
+  RestEndpointMethodTypes["pulls"]["list"]["response"]["data"][0];
+export type GitHubUser =
+  RestEndpointMethodTypes["users"]["getAuthenticated"]["response"]["data"];
+
 export interface GitHubRepo {
   id: number;
   name: string;
@@ -18,7 +27,7 @@ export interface GitHubRepo {
   created_at: string;
   updated_at: string;
   pushed_at: string;
-  activity_data?: any;
+  activity_data?: GitHubActivity;
 }
 
 export interface GitHubActivity {
@@ -54,9 +63,9 @@ export interface GitHubActivity {
 }
 
 export interface GitHubApiError extends Error {
-    status?: number;
-    response?: {
-        status: number;
-        data: any;
-    };
+  status?: number;
+  response?: {
+    status: number;
+    data: unknown;
+  };
 }

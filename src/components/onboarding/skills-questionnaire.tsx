@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { StepProps } from "@/app/onboarding/page";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -11,21 +11,84 @@ import { toast } from "sonner";
 import { supabase } from "@/lib/supabase/client";
 
 const POPULAR_SKILLS = [
-  'JavaScript', 'TypeScript', 'Python', 'Java', 'C++', 'C#', 'Go', 'Rust',
-  'React', 'Vue.js', 'Angular', 'Node.js', 'Next.js', 'Express',
-  'PostgreSQL', 'MySQL', 'MongoDB', 'Redis',
-  'AWS', 'Azure', 'GCP', 'Docker', 'Kubernetes',
-  'Git', 'Linux', 'Machine Learning', 'Data Science', 'DevOps'
+  "JavaScript",
+  "TypeScript",
+  "Python",
+  "Java",
+  "C++",
+  "C#",
+  "Go",
+  "Rust",
+  "React",
+  "Vue.js",
+  "Angular",
+  "Node.js",
+  "Next.js",
+  "Express",
+  "PostgreSQL",
+  "MySQL",
+  "MongoDB",
+  "Redis",
+  "AWS",
+  "Azure",
+  "GCP",
+  "Docker",
+  "Kubernetes",
+  "Git",
+  "Linux",
+  "Machine Learning",
+  "Data Science",
+  "DevOps",
 ] as const;
 
 const SKILL_CATEGORIES = {
-  programming_languages: ['javascript', 'typescript', 'python', 'java', 'c++', 'c#', 'go', 'rust', 'php', 'ruby', 'swift', 'kotlin'],
-  frameworks: ['react', 'vue.js', 'angular', 'node.js', 'next.js', 'express', 'django', 'flask', 'spring', 'laravel'],
-  databases: ['postgresql', 'mysql', 'mongodb', 'redis', 'sqlite', 'elasticsearch', 'cassandra'],
-  cloud_platforms: ['aws', 'azure', 'gcp', 'heroku', 'vercel', 'netlify', 'digitalocean']
+  programming_languages: [
+    "javascript",
+    "typescript",
+    "python",
+    "java",
+    "c++",
+    "c#",
+    "go",
+    "rust",
+    "php",
+    "ruby",
+    "swift",
+    "kotlin",
+  ],
+  frameworks: [
+    "react",
+    "vue.js",
+    "angular",
+    "node.js",
+    "next.js",
+    "express",
+    "django",
+    "flask",
+    "spring",
+    "laravel",
+  ],
+  databases: [
+    "postgresql",
+    "mysql",
+    "mongodb",
+    "redis",
+    "sqlite",
+    "elasticsearch",
+    "cassandra",
+  ],
+  cloud_platforms: [
+    "aws",
+    "azure",
+    "gcp",
+    "heroku",
+    "vercel",
+    "netlify",
+    "digitalocean",
+  ],
 } as const;
 
-type SkillCategory = keyof typeof SKILL_CATEGORIES | 'other_skills';
+type SkillCategory = keyof typeof SKILL_CATEGORIES | "other_skills";
 
 interface SkillsData {
   programming_languages: string[];
@@ -48,151 +111,161 @@ const INITIAL_SKILLS: SkillsData = {
   frameworks: [],
   databases: [],
   cloud_platforms: [],
-  other_skills: []
+  other_skills: [],
 };
 
 export function Skills({ onComplete, state, onPrevious }: StepProps) {
   const [skillsState, setSkillsState] = useState<SkillsState>({
     skills: INITIAL_SKILLS,
-    customSkill: '',
+    customSkill: "",
     isLoading: false,
     isSaving: false,
-    error: null
+    error: null,
   });
 
-  const allSkills = useMemo(() => 
-    Object.values(skillsState.skills).flat(),
-    [skillsState.skills]
+  const allSkills = useMemo(
+    () => Object.values(skillsState.skills).flat(),
+    [skillsState.skills],
   );
 
-  const availablePopularSkills = useMemo(() => 
-    POPULAR_SKILLS.filter(skill => 
-      !allSkills.some(s => s.toLowerCase() === skill.toLowerCase())
-    ).slice(0, 15),
-    [allSkills]
+  const availablePopularSkills = useMemo(
+    () =>
+      POPULAR_SKILLS.filter(
+        (skill) =>
+          !allSkills.some((s) => s.toLowerCase() === skill.toLowerCase()),
+      ).slice(0, 15),
+    [allSkills],
   );
 
   const categorizeSkill = useCallback((skill: string): SkillCategory => {
     const skillLower = skill.toLowerCase();
-    
+
     for (const [category, categorySkills] of Object.entries(SKILL_CATEGORIES)) {
       if ((categorySkills as readonly string[]).includes(skillLower)) {
         return category as keyof typeof SKILL_CATEGORIES;
       }
     }
-    return 'other_skills';
+    return "other_skills";
   }, []);
 
-  const addSkill = useCallback((skillToAdd: string) => {
-    const skill = skillToAdd.trim();
-    if (!skill) return;
+  const addSkill = useCallback(
+    (skillToAdd: string) => {
+      const skill = skillToAdd.trim();
+      if (!skill) return;
 
-    if (allSkills.some(s => s.toLowerCase() === skill.toLowerCase())) {
-      toast.error('Skill already added');
-      return;
-    }
+      if (allSkills.some((s) => s.toLowerCase() === skill.toLowerCase())) {
+        toast.error("Skill already added");
+        return;
+      }
 
-    const category = categorizeSkill(skill);
-    setSkillsState(prev => ({
-      ...prev,
-      skills: {
-        ...prev.skills,
-        [category]: [...prev.skills[category], skill]
-      },
-      customSkill: '',
-      error: null
-    }));
-  }, [allSkills, categorizeSkill]);
+      const category = categorizeSkill(skill);
+      setSkillsState((prev) => ({
+        ...prev,
+        skills: {
+          ...prev.skills,
+          [category]: [...prev.skills[category], skill],
+        },
+        customSkill: "",
+        error: null,
+      }));
+    },
+    [allSkills, categorizeSkill],
+  );
 
   const removeSkill = useCallback((skillToRemove: string) => {
-    setSkillsState(prev => ({
+    setSkillsState((prev) => ({
       ...prev,
       skills: Object.fromEntries(
         Object.entries(prev.skills).map(([category, categorySkills]) => [
           category,
-          categorySkills.filter((s: string) => s !== skillToRemove)
-        ])
-      ) as SkillsData
+          categorySkills.filter((s: string) => s !== skillToRemove),
+        ]),
+      ) as SkillsData,
     }));
   }, []);
 
-  const handleCustomSkillSubmit = useCallback((e: React.FormEvent) => {
-    e.preventDefault();
-    addSkill(skillsState.customSkill);
-  }, [addSkill, skillsState.customSkill]);
+  const handleCustomSkillSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      addSkill(skillsState.customSkill);
+    },
+    [addSkill, skillsState.customSkill],
+  );
 
   const handleComplete = useCallback(async () => {
     if (allSkills.length === 0) {
-      setSkillsState(prev => ({ ...prev, error: 'Please add at least one skill to continue' }));
+      setSkillsState((prev) => ({
+        ...prev,
+        error: "Please add at least one skill to continue",
+      }));
       return;
     }
 
-    setSkillsState(prev => ({ ...prev, isSaving: true, error: null }));
+    setSkillsState((prev) => ({ ...prev, isSaving: true, error: null }));
 
     try {
       const [profileResult, onboardingResult] = await Promise.all([
+        supabase.from("user_profiles").upsert({
+          user_id: state.user_id,
+          skills: skillsState.skills,
+          updated_at: new Date().toISOString(),
+        }),
         supabase
-          .from('user_profiles')
-          .upsert({
-            user_id: state.user_id,
-            skills: skillsState.skills,
-            updated_at: new Date().toISOString()
-          }),
-        supabase
-          .from('user_onboarding')
+          .from("user_onboarding")
           .update({
             skills_added: true,
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
           })
-          .eq('user_id', state.user_id)
+          .eq("user_id", state.user_id),
       ]);
 
       if (profileResult.error) throw profileResult.error;
       if (onboardingResult.error) throw onboardingResult.error;
 
-      toast.success('Skills saved successfully!');
+      toast.success("Skills saved successfully!");
       onComplete();
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to save skills';
-      setSkillsState(prev => ({ ...prev, error: errorMessage }));
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to save skills";
+      setSkillsState((prev) => ({ ...prev, error: errorMessage }));
       toast.error(errorMessage);
     } finally {
-      setSkillsState(prev => ({ ...prev, isSaving: false }));
+      setSkillsState((prev) => ({ ...prev, isSaving: false }));
     }
   }, [allSkills, skillsState.skills, state.user_id, onComplete]);
 
   const loadExistingSkills = useCallback(async () => {
     if (!state.user_id) return;
 
-    setSkillsState(prev => ({ ...prev, isLoading: true }));
+    setSkillsState((prev) => ({ ...prev, isLoading: true }));
 
     try {
       const { data, error } = await supabase
-        .from('user_profiles')
-        .select('skills')
-        .eq('user_id', state.user_id)
+        .from("user_profiles")
+        .select("skills")
+        .eq("user_id", state.user_id)
         .single();
 
-      if (error && error.code !== 'PGRST116') {
+      if (error && error.code !== "PGRST116") {
         throw error;
       }
 
       if (data?.skills) {
-        setSkillsState(prev => ({
+        setSkillsState((prev) => ({
           ...prev,
           skills: {
             programming_languages: data.skills.programming_languages || [],
             frameworks: data.skills.frameworks || [],
             databases: data.skills.databases || [],
             cloud_platforms: data.skills.cloud_platforms || [],
-            other_skills: data.skills.other_skills || []
-          }
+            other_skills: data.skills.other_skills || [],
+          },
         }));
       }
-    } catch (err) {
+    } catch {
       // Silent fail - existing skills are optional
     } finally {
-      setSkillsState(prev => ({ ...prev, isLoading: false }));
+      setSkillsState((prev) => ({ ...prev, isLoading: false }));
     }
   }, [state.user_id]);
 
@@ -208,8 +281,9 @@ export function Skills({ onComplete, state, onPrevious }: StepProps) {
     );
   }
 
-  const skillCategories = (Object.entries(skillsState.skills) as [keyof SkillsData, string[]][])
-    .filter(([, categorySkills]) => categorySkills.length > 0);
+  const skillCategories = (
+    Object.entries(skillsState.skills) as [keyof SkillsData, string[]][]
+  ).filter(([, categorySkills]) => categorySkills.length > 0);
 
   return (
     <div className="space-y-6 max-w-2xl mx-auto">
@@ -219,14 +293,17 @@ export function Skills({ onComplete, state, onPrevious }: StepProps) {
           <h2 className="text-2xl font-bold">Add Your Skills</h2>
         </div>
         <p className="text-muted-foreground">
-          Tell us about your technical skills and interests. This step is required to personalize your experience.
+          Tell us about your technical skills and interests. This step is
+          required to personalize your experience.
         </p>
       </div>
 
       <div className="space-y-3">
         <div className="flex items-center space-x-2">
           <Lightbulb className="h-4 w-4 text-yellow-500" />
-          <Label className="text-sm font-medium">Popular Skills (Click to add)</Label>
+          <Label className="text-sm font-medium">
+            Popular Skills (Click to add)
+          </Label>
         </div>
         <div className="flex flex-wrap gap-2">
           {availablePopularSkills.map((skill) => (
@@ -251,12 +328,17 @@ export function Skills({ onComplete, state, onPrevious }: StepProps) {
             type="text"
             placeholder="e.g., React Native, TensorFlow, etc."
             value={skillsState.customSkill}
-            onChange={(e) => setSkillsState(prev => ({ ...prev, customSkill: e.target.value }))}
+            onChange={(e) =>
+              setSkillsState((prev) => ({
+                ...prev,
+                customSkill: e.target.value,
+              }))
+            }
             disabled={skillsState.isSaving}
           />
-          <Button 
-            type="submit" 
-            variant="outline" 
+          <Button
+            type="submit"
+            variant="outline"
             disabled={!skillsState.customSkill.trim() || skillsState.isSaving}
           >
             <Plus className="h-4 w-4" />
@@ -265,14 +347,22 @@ export function Skills({ onComplete, state, onPrevious }: StepProps) {
       </div>
 
       {skillCategories.map(([category, categorySkills]) => {
-        const categoryName = category.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-        
+        const categoryName = category
+          .replace(/_/g, " ")
+          .replace(/\b\w/g, (l) => l.toUpperCase());
+
         return (
           <div key={category} className="space-y-2">
-            <Label className="text-sm font-medium text-muted-foreground">{categoryName}</Label>
+            <Label className="text-sm font-medium text-muted-foreground">
+              {categoryName}
+            </Label>
             <div className="flex flex-wrap gap-2">
               {categorySkills.map((skill: string) => (
-                <Badge key={skill} variant="secondary" className="flex items-center space-x-1">
+                <Badge
+                  key={skill}
+                  variant="secondary"
+                  className="flex items-center space-x-1"
+                >
                   <span>{skill}</span>
                   <button
                     type="button"
@@ -291,8 +381,8 @@ export function Skills({ onComplete, state, onPrevious }: StepProps) {
 
       <div className="text-center">
         <p className="text-sm text-muted-foreground">
-          {allSkills.length} skill{allSkills.length !== 1 ? 's' : ''} added
-          {allSkills.length === 0 && ' - Please add at least one skill'}
+          {allSkills.length} skill{allSkills.length !== 1 ? "s" : ""} added
+          {allSkills.length === 0 && " - Please add at least one skill"}
         </p>
       </div>
 
@@ -310,12 +400,14 @@ export function Skills({ onComplete, state, onPrevious }: StepProps) {
         >
           Previous
         </Button>
-        
+
         <Button
           onClick={handleComplete}
           disabled={allSkills.length === 0 || skillsState.isSaving}
         >
-          {skillsState.isSaving && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+          {skillsState.isSaving && (
+            <Loader2 className="h-4 w-4 animate-spin mr-2" />
+          )}
           Complete Setup
         </Button>
       </div>

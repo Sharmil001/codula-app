@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { StepProps } from "@/app/onboarding/page";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -9,8 +9,13 @@ import { Loader2, Twitter, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/lib/supabase/client";
 
-export function TwitterProfile({ onComplete, state, onPrevious, isLastStep }: StepProps) {
-  const [twitterHandle, setTwitterHandle] = useState('');
+export function TwitterProfile({
+  onComplete,
+  state,
+  onPrevious,
+  isLastStep,
+}: StepProps) {
+  const [twitterHandle, setTwitterHandle] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -18,16 +23,16 @@ export function TwitterProfile({ onComplete, state, onPrevious, isLastStep }: St
   useEffect(() => {
     const loadExistingHandle = async () => {
       if (!state.user_id) return;
-      
+
       try {
         setIsLoading(true);
         const { data, error } = await supabase
-          .from('user_profiles')
-          .select('twitter_handle')
-          .eq('user_id', state.user_id)
+          .from("user_profiles")
+          .select("twitter_handle")
+          .eq("user_id", state.user_id)
           .single();
 
-        if (error && error.code !== 'PGRST116') {
+        if (error && error.code !== "PGRST116") {
           throw error;
         }
 
@@ -35,7 +40,7 @@ export function TwitterProfile({ onComplete, state, onPrevious, isLastStep }: St
           setTwitterHandle(data.twitter_handle);
         }
       } catch (err) {
-        console.error('Error loading twitter handle:', err);
+        console.error("Error loading twitter handle:", err);
       } finally {
         setIsLoading(false);
       }
@@ -45,7 +50,7 @@ export function TwitterProfile({ onComplete, state, onPrevious, isLastStep }: St
   }, [state.user_id]);
 
   const handleTwitterHandleChange = (value: string) => {
-    const cleanHandle = value.replace(/^@/, '');
+    const cleanHandle = value.replace(/^@/, "");
     setTwitterHandle(cleanHandle);
     setError(null);
   };
@@ -60,9 +65,11 @@ export function TwitterProfile({ onComplete, state, onPrevious, isLastStep }: St
     if (!state.user_id) return;
 
     const trimmedHandle = twitterHandle.trim();
-    
+
     if (trimmedHandle && !validateTwitterHandle(trimmedHandle)) {
-      setError('Please enter a valid Twitter handle (1-15 characters, letters, numbers, and underscores only)');
+      setError(
+        "Please enter a valid Twitter handle (1-15 characters, letters, numbers, and underscores only)",
+      );
       return;
     }
 
@@ -71,29 +78,32 @@ export function TwitterProfile({ onComplete, state, onPrevious, isLastStep }: St
       setError(null);
 
       const { error: profileError } = await supabase
-        .from('user_profiles')
+        .from("user_profiles")
         .upsert({
           user_id: state.user_id,
           twitter_handle: trimmedHandle || null,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         });
 
       if (profileError) throw profileError;
 
       const { error: onboardingError } = await supabase
-        .from('user_onboarding')
+        .from("user_onboarding")
         .update({
           twitter_added: true,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
-        .eq('user_id', state.user_id);
+        .eq("user_id", state.user_id);
 
       if (onboardingError) throw onboardingError;
 
-      toast.success(trimmedHandle ? 'Twitter profile updated!' : 'Twitter step completed!');
+      toast.success(
+        trimmedHandle ? "Twitter profile updated!" : "Twitter step completed!",
+      );
       onComplete();
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to save Twitter profile';
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to save Twitter profile";
       setError(errorMessage);
       toast.error(errorMessage);
     } finally {
@@ -117,7 +127,8 @@ export function TwitterProfile({ onComplete, state, onPrevious, isLastStep }: St
           <h2 className="text-2xl font-bold">Twitter Profile (Optional)</h2>
         </div>
         <p className="text-muted-foreground">
-          Add your Twitter handle to showcase your social presence and connect with the community. This step is optional.
+          Add your Twitter handle to showcase your social presence and connect
+          with the community. This step is optional.
         </p>
       </div>
 
@@ -140,7 +151,8 @@ export function TwitterProfile({ onComplete, state, onPrevious, isLastStep }: St
             />
           </div>
           <p className="text-sm text-muted-foreground">
-            Enter your Twitter username without the @ symbol, or leave blank to skip
+            Enter your Twitter username without the @ symbol, or leave blank to
+            skip
           </p>
         </div>
 
@@ -153,20 +165,13 @@ export function TwitterProfile({ onComplete, state, onPrevious, isLastStep }: St
       </div>
 
       <div className="flex justify-between pt-4 border-t border-border">
-        <Button
-          variant="outline"
-          onClick={onPrevious}
-          disabled={isSaving}
-        >
+        <Button variant="outline" onClick={onPrevious} disabled={isSaving}>
           Previous
         </Button>
-        
-        <Button
-          onClick={handleContinue}
-          disabled={isSaving}
-        >
+
+        <Button onClick={handleContinue} disabled={isSaving}>
           {isSaving && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-          {isLastStep ? 'Complete Setup' : 'Continue'}
+          {isLastStep ? "Complete Setup" : "Continue"}
         </Button>
       </div>
     </div>

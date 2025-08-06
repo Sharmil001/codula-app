@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { getUserRepos, getRepoActivity } from "@/lib/github";
 import { useEffect, useState, useMemo, useCallback } from "react";
@@ -30,125 +30,138 @@ export function RepoSelector({ onComplete, state }: StepProps) {
     repos: [],
     selectedRepos: [],
     syncedRepos: new Set(),
-    previouslySelectedRepos: new Set()
+    previouslySelectedRepos: new Set(),
   });
 
   const [loadingState, setLoadingState] = useState<LoadingState>({
     isLoading: true,
     isSaving: false,
     syncingRepo: null,
-    error: null
+    error: null,
   });
 
-  const isStepCompleted = useMemo(() => 
-    state.repos_selected && repoState.selectedRepos.length > 0,
-    [state.repos_selected, repoState.selectedRepos.length]
+  const isStepCompleted = useMemo(
+    () => state.repos_selected && repoState.selectedRepos.length > 0,
+    [state.repos_selected, repoState.selectedRepos.length],
   );
 
-  const availableSelections = useMemo(() => 
-    MAX_SELECTIONS - repoState.selectedRepos.length,
-    [repoState.selectedRepos.length]
+  const availableSelections = useMemo(
+    () => MAX_SELECTIONS - repoState.selectedRepos.length,
+    [repoState.selectedRepos.length],
   );
 
-  const syncRepository = useCallback(async (repo: GitHubRepo) => {
-    setLoadingState(prev => ({ ...prev, syncingRepo: repo.id }));
+  const syncRepository = useCallback(
+    async (repo: GitHubRepo) => {
+      setLoadingState((prev) => ({ ...prev, syncingRepo: repo.id }));
 
-    try {
-      const activity = await getRepoActivity(repo);
-      if (!activity) {
-        throw new Error('No activity data returned from GitHub API');
+      try {
+        const activity = await getRepoActivity(repo);
+        if (!activity) {
+          throw new Error("No activity data returned from GitHub API");
+        }
+
+        const repoData = {
+          id: repo.id,
+          user_id: state.user_id,
+          name: repo.name,
+          full_name: repo.full_name,
+          description: repo.description || null,
+          is_private: repo.private || false,
+          html_url: repo.html_url,
+          language: repo.language || null,
+          stargazers_count: repo.stargazers_count || 0,
+          forks_count: repo.forks_count || 0,
+          default_branch: repo.default_branch || "main",
+          owner_login: repo.owner?.login || "",
+          owner_avatar_url: repo.owner?.avatar_url || "",
+          created_at: repo.created_at || new Date().toISOString(),
+          updated_at: repo.updated_at || new Date().toISOString(),
+          pushed_at: repo.pushed_at || null,
+          last_synced_at: new Date().toISOString(),
+          activity_data: activity,
+        };
+
+        const { error } = await supabase
+          .from("github_repos")
+          .upsert(repoData, { onConflict: "id" });
+
+        if (error) throw error;
+
+        setRepoState((prev) => ({
+          ...prev,
+          syncedRepos: new Set(prev.syncedRepos).add(repo.id),
+          repos: prev.repos.map((r) =>
+            r.id === repo.id ? { ...r, activity_data: activity } : r,
+          ),
+        }));
+
+        toast.success(`Synced ${repo.name} successfully`);
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Unknown error occurred";
+        toast.error(`Failed to sync ${repo.name}: ${errorMessage}`);
+        throw error;
+      } finally {
+        setLoadingState((prev) => ({ ...prev, syncingRepo: null }));
+      }
+    },
+    [state.user_id],
+  );
+
+  const toggleRepo = useCallback(
+    (repoId: number) => {
+      if (repoState.previouslySelectedRepos.has(repoId)) {
+        toast.info(
+          "This repository is already synced and cannot be deselected.",
+        );
+        return;
       }
 
-      const repoData = {
-        id: repo.id,
-        user_id: state.user_id,
-        name: repo.name,
-        full_name: repo.full_name,
-        description: repo.description || null,
-        is_private: repo.private || false,
-        html_url: repo.html_url,
-        language: repo.language || null,
-        stargazers_count: repo.stargazers_count || 0,
-        forks_count: repo.forks_count || 0,
-        default_branch: repo.default_branch || 'main',
-        owner_login: repo.owner?.login || '',
-        owner_avatar_url: repo.owner?.avatar_url || '',
-        created_at: repo.created_at || new Date().toISOString(),
-        updated_at: repo.updated_at || new Date().toISOString(),
-        pushed_at: repo.pushed_at || null,
-        last_synced_at: new Date().toISOString(),
-        activity_data: activity
-      };
+      setRepoState((prev) => {
+        const isCurrentlySelected = prev.selectedRepos.includes(repoId);
 
-      const { error } = await supabase
-        .from('github_repos')
-        .upsert(repoData, { onConflict: 'id' });
+        if (isCurrentlySelected) {
+          return {
+            ...prev,
+            selectedRepos: prev.selectedRepos.filter((id) => id !== repoId),
+          };
+        }
 
-      if (error) throw error;
+        if (prev.selectedRepos.length >= MAX_SELECTIONS) {
+          toast.error(
+            `You can only select up to ${MAX_SELECTIONS} repositories.`,
+          );
+          return prev;
+        }
 
-      setRepoState(prev => ({
-        ...prev,
-        syncedRepos: new Set(prev.syncedRepos).add(repo.id),
-        repos: prev.repos.map(r => r.id === repo.id ? { ...r, activity_data: activity } : r)
-      }));
-
-      toast.success(`Synced ${repo.name} successfully`);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-      toast.error(`Failed to sync ${repo.name}: ${errorMessage}`);
-      throw error;
-    } finally {
-      setLoadingState(prev => ({ ...prev, syncingRepo: null }));
-    }
-  }, [state.user_id]);
-
-  const toggleRepo = useCallback((repoId: number) => {
-    if (repoState.previouslySelectedRepos.has(repoId)) {
-      toast.info('This repository is already synced and cannot be deselected.');
-      return;
-    }
-
-    setRepoState(prev => {
-      const isCurrentlySelected = prev.selectedRepos.includes(repoId);
-      
-      if (isCurrentlySelected) {
         return {
           ...prev,
-          selectedRepos: prev.selectedRepos.filter(id => id !== repoId)
+          selectedRepos: [...prev.selectedRepos, repoId],
         };
-      }
-
-      if (prev.selectedRepos.length >= MAX_SELECTIONS) {
-        toast.error(`You can only select up to ${MAX_SELECTIONS} repositories.`);
-        return prev;
-      }
-
-      return {
-        ...prev,
-        selectedRepos: [...prev.selectedRepos, repoId]
-      };
-    });
-  }, [repoState.previouslySelectedRepos]);
+      });
+    },
+    [repoState.previouslySelectedRepos],
+  );
 
   const fetchPreviouslySelectedRepos = useCallback(async () => {
     try {
       const { data: userRepos, error } = await supabase
-        .from('github_repos')
-        .select('id')
-        .eq('user_id', state.user_id);
+        .from("github_repos")
+        .select("id")
+        .eq("user_id", state.user_id);
 
       if (error) throw error;
 
-      const repoIds = userRepos?.map(repo => repo.id) || [];
+      const repoIds = userRepos?.map((repo) => repo.id) || [];
       const repoIdSet = new Set(repoIds);
 
-      setRepoState(prev => ({
+      setRepoState((prev) => ({
         ...prev,
         previouslySelectedRepos: repoIdSet,
         syncedRepos: repoIdSet,
-        selectedRepos: repoIds
+        selectedRepos: repoIds,
       }));
-    } catch (err) {
+    } catch {
       // Silent fail - previously selected repos are optional
     }
   }, [state.user_id]);
@@ -159,29 +172,33 @@ export function RepoSelector({ onComplete, state }: StepProps) {
         isLoading: false,
         isSaving: false,
         syncingRepo: null,
-        error: 'GitHub is not connected. Please connect your GitHub account first.'
+        error:
+          "GitHub is not connected. Please connect your GitHub account first.",
       });
       return;
     }
 
     try {
-      setLoadingState(prev => ({ ...prev, isLoading: true, error: null }));
+      setLoadingState((prev) => ({ ...prev, isLoading: true, error: null }));
 
       await fetchPreviouslySelectedRepos();
       const fetchedRepos = await getUserRepos();
 
       if (!fetchedRepos?.length) {
-        throw new Error('No repositories found. Please make sure you have access to at least one GitHub repository.');
+        throw new Error(
+          "No repositories found. Please make sure you have access to at least one GitHub repository.",
+        );
       }
 
-      setRepoState(prev => ({ ...prev, repos: fetchedRepos }));
+      setRepoState((prev) => ({ ...prev, repos: fetchedRepos }));
     } catch (err) {
-      setLoadingState(prev => ({
+      setLoadingState((prev) => ({
         ...prev,
-        error: err instanceof Error ? err.message : 'Failed to load repositories'
+        error:
+          err instanceof Error ? err.message : "Failed to load repositories",
       }));
     } finally {
-      setLoadingState(prev => ({ ...prev, isLoading: false }));
+      setLoadingState((prev) => ({ ...prev, isLoading: false }));
     }
   }, [state.github_connected, fetchPreviouslySelectedRepos]);
 
@@ -190,50 +207,55 @@ export function RepoSelector({ onComplete, state }: StepProps) {
       const { error: refreshError } = await supabase.auth.refreshSession();
       if (refreshError) throw refreshError;
       await fetchRepos();
-    } catch (err) {
-      setLoadingState(prev => ({
+    } catch {
+      setLoadingState((prev) => ({
         ...prev,
-        error: 'Failed to refresh your session. Please sign in again.'
+        error: "Failed to refresh your session. Please sign in again.",
       }));
     }
   }, [fetchRepos]);
 
   const saveAndComplete = useCallback(async () => {
     if (repoState.selectedRepos.length === 0) {
-      toast.error('Please select at least one repository');
+      toast.error("Please select at least one repository");
       return;
     }
 
     try {
-      setLoadingState(prev => ({ ...prev, isSaving: true }));
+      setLoadingState((prev) => ({ ...prev, isSaving: true }));
 
-      const selectedRepoData = repoState.repos.filter(repo => 
-        repoState.selectedRepos.includes(repo.id)
+      const selectedRepoData = repoState.repos.filter((repo) =>
+        repoState.selectedRepos.includes(repo.id),
       );
 
       // Sync unsynced repos in parallel
-      const unsyncedRepos = selectedRepoData.filter(repo => 
-        !repoState.syncedRepos.has(repo.id)
+      const unsyncedRepos = selectedRepoData.filter(
+        (repo) => !repoState.syncedRepos.has(repo.id),
       );
 
-      await Promise.all(unsyncedRepos.map(repo => syncRepository(repo)));
+      await Promise.all(unsyncedRepos.map((repo) => syncRepository(repo)));
 
       const { error: onboardingError } = await supabase
-        .from('user_onboarding')
-        .upsert({
-          user_id: state.user_id,
-          repos_selected: true,
-          updated_at: new Date().toISOString()
-        }, { onConflict: 'user_id' });
+        .from("user_onboarding")
+        .upsert(
+          {
+            user_id: state.user_id,
+            repos_selected: true,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: "user_id" },
+        );
 
       if (onboardingError) throw onboardingError;
 
-      toast.success('Repositories saved successfully!');
+      toast.success("Repositories saved successfully!");
       setTimeout(onComplete, 1000);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Failed to save repositories');
+      toast.error(
+        err instanceof Error ? err.message : "Failed to save repositories",
+      );
     } finally {
-      setLoadingState(prev => ({ ...prev, isSaving: false }));
+      setLoadingState((prev) => ({ ...prev, isSaving: false }));
     }
   }, [repoState, state.user_id, syncRepository, onComplete]);
 
@@ -260,13 +282,13 @@ export function RepoSelector({ onComplete, state }: StepProps) {
           <p className="font-medium mb-2">Failed to load repositories</p>
           <p className="text-sm">{loadingState.error}</p>
         </div>
-        
+
         <div className="flex gap-2">
           <Button onClick={handleRetry} variant="outline">
             <RefreshCw className="h-4 w-4 mr-2" />
             Retry
           </Button>
-          <Button onClick={() => window.location.href = '/onboarding?step=1'}>
+          <Button onClick={() => (window.location.href = "/onboarding?step=1")}>
             Reconnect GitHub
           </Button>
         </div>
@@ -285,7 +307,7 @@ export function RepoSelector({ onComplete, state }: StepProps) {
             We couldn&apos;t find any repositories in your GitHub account.
           </p>
         </div>
-        
+
         <div className="flex gap-2">
           <Button onClick={fetchRepos} variant="outline">
             <RefreshCw className="h-4 w-4 mr-2" />
@@ -301,16 +323,18 @@ export function RepoSelector({ onComplete, state }: StepProps) {
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold">
-          {isStepCompleted ? 'Your Selected Repositories' : 'Select repositories to track'}
+          {isStepCompleted
+            ? "Your Selected Repositories"
+            : "Select repositories to track"}
         </h2>
         <p className="text-muted-foreground">
-          {isStepCompleted 
+          {isStepCompleted
             ? `You can select up to ${MAX_SELECTIONS} repositories.`
-            : `Choose up to ${MAX_SELECTIONS} repositories to track your contributions and sync their activity.`
-          }
+            : `Choose up to ${MAX_SELECTIONS} repositories to track your contributions and sync their activity.`}
         </p>
         <p className="text-sm text-muted-foreground mt-2">
-          Found {repoState.repos.length} repositories • {repoState.selectedRepos.length} of {MAX_SELECTIONS} selected
+          Found {repoState.repos.length} repositories •{" "}
+          {repoState.selectedRepos.length} of {MAX_SELECTIONS} selected
           {repoState.previouslySelectedRepos.size > 0 && (
             <span className="ml-2 text-green-600">
               • {repoState.previouslySelectedRepos.size} already synced
@@ -318,23 +342,26 @@ export function RepoSelector({ onComplete, state }: StepProps) {
           )}
         </p>
       </div>
-      
+
       <div className="space-y-2 max-h-[500px] overflow-y-auto p-2 border rounded-md">
-        {repoState.repos.map(repo => {
+        {repoState.repos.map((repo) => {
           const isSelected = repoState.selectedRepos.includes(repo.id);
-          const isPreviouslySelected = repoState.previouslySelectedRepos.has(repo.id);
+          const isPreviouslySelected = repoState.previouslySelectedRepos.has(
+            repo.id,
+          );
           const isSynced = repoState.syncedRepos.has(repo.id);
-          const isDisabled = isPreviouslySelected || (!isSelected && availableSelections === 0);
-          
+          const isDisabled =
+            isPreviouslySelected || (!isSelected && availableSelections === 0);
+
           return (
-            <div 
-              key={repo.id} 
+            <div
+              key={repo.id}
               className={`flex items-start space-x-3 p-4 rounded-lg border transition-colors ${
-                isSelected 
-                  ? isPreviouslySelected 
-                    ? 'border-green-300 bg-green-50' 
-                    : 'border-primary/30 bg-primary/5'
-                  : 'hover:bg-muted/50'
+                isSelected
+                  ? isPreviouslySelected
+                    ? "border-green-300 bg-green-50"
+                    : "border-primary/30 bg-primary/5"
+                  : "hover:bg-muted/50"
               }`}
             >
               <div className="mt-1">
@@ -346,7 +373,7 @@ export function RepoSelector({ onComplete, state }: StepProps) {
                   className="h-4 w-4 rounded border-gray-300 text-primary disabled:opacity-50"
                 />
               </div>
-              
+
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
@@ -362,15 +389,21 @@ export function RepoSelector({ onComplete, state }: StepProps) {
                       </span>
                     )}
                   </div>
-                  
+
                   {!isPreviouslySelected && (
                     <Button
                       variant="ghost"
                       size="icon"
                       onClick={() => syncRepository(repo)}
-                      disabled={loadingState.syncingRepo === repo.id || !isSelected}
+                      disabled={
+                        loadingState.syncingRepo === repo.id || !isSelected
+                      }
                       className="h-7 w-7"
-                      title={isSelected ? "Sync repository" : "Select repository first"}
+                      title={
+                        isSelected
+                          ? "Sync repository"
+                          : "Select repository first"
+                      }
                     >
                       {loadingState.syncingRepo === repo.id ? (
                         <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -380,7 +413,7 @@ export function RepoSelector({ onComplete, state }: StepProps) {
                     </Button>
                   )}
                 </div>
-                
+
                 <div className="text-sm text-muted-foreground mt-1">
                   {repo.description ? (
                     <p className="line-clamp-2">{repo.description}</p>
@@ -388,7 +421,7 @@ export function RepoSelector({ onComplete, state }: StepProps) {
                     <p className="italic">No description available</p>
                   )}
                 </div>
-                
+
                 <div className="flex flex-wrap gap-2 mt-2">
                   {repo.language && (
                     <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary">
@@ -409,25 +442,28 @@ export function RepoSelector({ onComplete, state }: StepProps) {
           );
         })}
       </div>
-      
+
       <div className="flex justify-between items-center pt-4 border-t">
         <div className="text-sm text-muted-foreground">
-          {isStepCompleted ? (
-            `${repoState.selectedRepos.length} repositories are synced and active`
-          ) : repoState.selectedRepos.length === 0 ? (
-            `Select up to ${MAX_SELECTIONS} repositories to sync`
-          ) : (
-            `${repoState.selectedRepos.length} of ${MAX_SELECTIONS} repositories selected`
-          )}
+          {isStepCompleted
+            ? `${repoState.selectedRepos.length} repositories are synced and active`
+            : repoState.selectedRepos.length === 0
+              ? `Select up to ${MAX_SELECTIONS} repositories to sync`
+              : `${repoState.selectedRepos.length} of ${MAX_SELECTIONS} repositories selected`}
         </div>
-        
-        <Button 
+
+        <Button
           onClick={isStepCompleted ? onComplete : saveAndComplete}
-          disabled={!isStepCompleted && (repoState.selectedRepos.length === 0 || loadingState.syncingRepo !== null || loadingState.isSaving)}
+          disabled={
+            !isStepCompleted &&
+            (repoState.selectedRepos.length === 0 ||
+              loadingState.syncingRepo !== null ||
+              loadingState.isSaving)
+          }
           className="min-w-[140px]"
         >
           {isStepCompleted ? (
-            'Continue to Next Step'
+            "Continue to Next Step"
           ) : loadingState.syncingRepo ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -439,7 +475,7 @@ export function RepoSelector({ onComplete, state }: StepProps) {
               Saving...
             </>
           ) : (
-            'Save & Continue'
+            "Save & Continue"
           )}
         </Button>
       </div>
