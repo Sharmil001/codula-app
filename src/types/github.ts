@@ -69,3 +69,46 @@ export interface GitHubApiError extends Error {
     data: unknown;
   };
 }
+
+
+export interface PRData {
+    title: string;
+    description: string;
+    author: string;
+    state: 'open' | 'closed' | 'merged';
+    createdAt: string;
+    mergedAt: string | null;
+    closedAt: string | null;
+    additions: number;
+    deletions: number;
+    changedFiles: number;
+    commits: Array<{
+      message: string;
+      author: string;
+      date: string;
+    }>;
+    files: Array<{
+      filename: string;
+      status: 'added' | 'modified' | 'removed' | 'renamed';
+      additions: number;
+      deletions: number;
+      patch?: string;
+    }>;
+    reviewComments: Array<{
+      author: string;
+      body: string;
+      createdAt: string;
+    }>;
+    labels: string[];
+    linkedIssues: string[];
+  }
+  
+  export interface PRStory {
+    summary: string;
+    technicalDetails: string;
+    impact: string;
+    keyChanges: string[];
+    complexity: 'low' | 'medium' | 'high';
+    tags: string[];
+  }
+  
