@@ -52,8 +52,12 @@ export default function Dashboard() {
 
         // Set user data
         setUserData({
-          name: user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0] || 'Developer',
-          email: user.email || '',
+          name:
+            user.user_metadata?.full_name ||
+            user.user_metadata?.name ||
+            user.email?.split("@")[0] ||
+            "Developer",
+          email: user.email || "",
           avatar_url: user.user_metadata?.avatar_url,
         });
 
@@ -139,22 +143,31 @@ export default function Dashboard() {
         // Load user repositories and profile data
         const [reposResult, profileResult] = await Promise.all([
           supabase.from("github_repos").select("id").eq("user_id", userId),
-          supabase.from("user_profiles").select("skills").eq("user_id", userId).single()
+          supabase
+            .from("user_profiles")
+            .select("skills")
+            .eq("user_id", userId)
+            .single(),
         ]);
 
         // Safely extract skills with proper typing
         let allSkills: string[] = [];
-        if (profileResult.data?.skills && typeof profileResult.data.skills === 'object') {
+        if (
+          profileResult.data?.skills &&
+          typeof profileResult.data.skills === "object"
+        ) {
           allSkills = Object.values(profileResult.data.skills)
-            .filter((skillGroup): skillGroup is string[] => Array.isArray(skillGroup))
+            .filter((skillGroup): skillGroup is string[] =>
+              Array.isArray(skillGroup),
+            )
             .flat()
-            .filter((skill): skill is string => typeof skill === 'string');
+            .filter((skill): skill is string => typeof skill === "string");
         }
 
         setUserStats({
           totalRepos: reposResult.data?.length || 0,
           skills: allSkills,
-          githubProfile: "github.com/user" // This would be actual profile
+          githubProfile: "github.com/user", // This would be actual profile
         });
       } catch (error) {
         console.error("Error loading user stats:", error);
@@ -162,7 +175,7 @@ export default function Dashboard() {
         setUserStats({
           totalRepos: 0,
           skills: [],
-          githubProfile: "github.com/user"
+          githubProfile: "github.com/user",
         });
       }
     };
@@ -183,20 +196,19 @@ export default function Dashboard() {
             <Sparkles className="h-6 w-6 text-primary absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
           </div>
           <div>
-            <h2 className="text-xl font-semibold text-foreground">Loading your dashboard</h2>
-            <p className="text-muted-foreground">Preparing personalized insights...</p>
+            <h2 className="text-xl font-semibold text-foreground">
+              Loading your dashboard
+            </h2>
+            <p className="text-muted-foreground">
+              Preparing personalized insights...
+            </p>
           </div>
         </div>
       </div>
     );
   }
 
-  return (
-    <DashboardLayout 
-      userData={userData} 
-      userStats={userStats} 
-    />
-  );
+  return <DashboardLayout userData={userData} userStats={userStats} />;
 }
 
 function getFieldForStep(step: number, data: OnboardingData): boolean {

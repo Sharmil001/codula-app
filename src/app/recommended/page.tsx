@@ -2,25 +2,31 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { 
-  ArrowLeft, 
-  Sparkles, 
-  TrendingUp, 
-  BookOpen, 
-  Star, 
-  GitFork, 
-  Users, 
+import {
+  ArrowLeft,
+  Sparkles,
+  TrendingUp,
+  BookOpen,
+  Star,
+  GitFork,
+  Users,
   Calendar,
   Filter,
   Search,
   SlidersHorizontal,
-  Code2
+  Code2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { RepoSheet } from "@/components/dashboard/repo-sheet";
 
 interface Repository {
@@ -88,7 +94,8 @@ const allRecommendations: Repository[] = [
   {
     id: 4,
     name: "nodejs/node",
-    description: "Node.js JavaScript runtime built on Chrome's V8 JavaScript engine",
+    description:
+      "Node.js JavaScript runtime built on Chrome's V8 JavaScript engine",
     stars: 105000,
     language: "JavaScript",
     relevanceScore: 82,
@@ -103,7 +110,8 @@ const allRecommendations: Repository[] = [
   {
     id: 5,
     name: "pytorch/pytorch",
-    description: "Tensors and Dynamic neural networks in Python with strong GPU acceleration",
+    description:
+      "Tensors and Dynamic neural networks in Python with strong GPU acceleration",
     stars: 82000,
     language: "Python",
     relevanceScore: 89,
@@ -118,7 +126,8 @@ const allRecommendations: Repository[] = [
   {
     id: 6,
     name: "docker/docker-ce",
-    description: "Docker CE (Community Edition) is the new name for the Docker open source project",
+    description:
+      "Docker CE (Community Edition) is the new name for the Docker open source project",
     stars: 45000,
     language: "Go",
     relevanceScore: 76,
@@ -150,12 +159,15 @@ export default function RecommendedPage() {
   };
 
   const filteredRepos = allRecommendations
-    .filter(repo => {
-      const matchesSearch = repo.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                           repo.description.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesFilter = filterBy === "all" || 
-                           (filterBy === "trending" && repo.trending) ||
-                           (filterBy === "language" && repo.language.toLowerCase() === filterBy.toLowerCase());
+    .filter((repo) => {
+      const matchesSearch =
+        repo.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        repo.description.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesFilter =
+        filterBy === "all" ||
+        (filterBy === "trending" && repo.trending) ||
+        (filterBy === "language" &&
+          repo.language.toLowerCase() === filterBy.toLowerCase());
       return matchesSearch && matchesFilter;
     })
     .sort((a, b) => {
@@ -165,16 +177,19 @@ export default function RecommendedPage() {
         case "stars":
           return b.stars - a.stars;
         case "updated":
-          return new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime();
+          return (
+            new Date(b.lastUpdated).getTime() -
+            new Date(a.lastUpdated).getTime()
+          );
         default:
           return 0;
       }
     });
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
     });
   };
 
@@ -193,7 +208,9 @@ export default function RecommendedPage() {
                   <Sparkles className="h-5 w-5 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold text-foreground">AI Recommendations</h1>
+                  <h1 className="text-2xl font-bold text-foreground">
+                    AI Recommendations
+                  </h1>
                   <p className="text-sm text-muted-foreground">
                     {filteredRepos.length} repositories curated for you
                   </p>
@@ -233,7 +250,7 @@ export default function RecommendedPage() {
                   <SelectItem value="updated">Recently Updated</SelectItem>
                 </SelectContent>
               </Select>
-              
+
               <Select value={filterBy} onValueChange={setFilterBy}>
                 <SelectTrigger className="w-[120px]">
                   <Filter className="h-4 w-4 mr-2" />
@@ -252,31 +269,31 @@ export default function RecommendedPage() {
 
           {/* Quick Filters */}
           <div className="flex flex-wrap gap-2">
-            <Button 
-              variant={filterBy === "all" ? "default" : "outline"} 
-              size="sm" 
+            <Button
+              variant={filterBy === "all" ? "default" : "outline"}
+              size="sm"
               onClick={() => setFilterBy("all")}
             >
               All Repos
             </Button>
-            <Button 
-              variant={filterBy === "trending" ? "default" : "outline"} 
-              size="sm" 
+            <Button
+              variant={filterBy === "trending" ? "default" : "outline"}
+              size="sm"
               onClick={() => setFilterBy("trending")}
             >
               <TrendingUp className="h-3 w-3 mr-1" />
               Trending
             </Button>
-            <Button 
-              variant={filterBy === "python" ? "default" : "outline"} 
-              size="sm" 
+            <Button
+              variant={filterBy === "python" ? "default" : "outline"}
+              size="sm"
               onClick={() => setFilterBy("python")}
             >
               Python
             </Button>
-            <Button 
-              variant={filterBy === "javascript" ? "default" : "outline"} 
-              size="sm" 
+            <Button
+              variant={filterBy === "javascript" ? "default" : "outline"}
+              size="sm"
               onClick={() => setFilterBy("javascript")}
             >
               JavaScript
@@ -286,8 +303,8 @@ export default function RecommendedPage() {
 
         <div className="space-y-4">
           {filteredRepos.map((repo) => (
-            <Card 
-              key={repo.id} 
+            <Card
+              key={repo.id}
               className="border-border/50 bg-card/50 backdrop-blur-sm hover:bg-muted/30 transition-all duration-200 cursor-pointer group"
               onClick={() => handleRepoClick(repo)}
             >
@@ -301,10 +318,13 @@ export default function RecommendedPage() {
                           {repo.name}
                         </h3>
                       </div>
-                      
+
                       <div className="flex items-center space-x-2">
                         {repo.trending && (
-                          <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
+                          <Badge
+                            variant="outline"
+                            className="bg-orange-50 text-orange-700 border-orange-200"
+                          >
                             <TrendingUp className="h-3 w-3 mr-1" />
                             Trending
                           </Badge>
@@ -320,7 +340,9 @@ export default function RecommendedPage() {
                     </p>
 
                     <div className="mb-4 p-3 bg-primary/5 border border-primary/20 rounded-lg">
-                      <p className="text-sm text-primary font-medium">{repo.reason}</p>
+                      <p className="text-sm text-primary font-medium">
+                        {repo.reason}
+                      </p>
                     </div>
 
                     <div className="flex items-center space-x-6 text-sm text-muted-foreground">
@@ -349,7 +371,11 @@ export default function RecommendedPage() {
                     {/* Topics */}
                     <div className="flex flex-wrap gap-2 mt-4">
                       {repo.topics.slice(0, 4).map((topic) => (
-                        <Badge key={topic} variant="secondary" className="text-xs">
+                        <Badge
+                          key={topic}
+                          variant="secondary"
+                          className="text-xs"
+                        >
                           {topic}
                         </Badge>
                       ))}
@@ -360,11 +386,13 @@ export default function RecommendedPage() {
                       )}
                     </div>
                   </div>
-                  
+
                   <div className="flex-shrink-0 ml-6">
                     <div className="flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full border-2 border-primary/20">
                       <div className="text-center">
-                        <div className="text-lg font-bold text-primary">{repo.relevanceScore}</div>
+                        <div className="text-lg font-bold text-primary">
+                          {repo.relevanceScore}
+                        </div>
                         <div className="text-xs text-primary/80">match</div>
                       </div>
                     </div>
@@ -380,21 +408,26 @@ export default function RecommendedPage() {
             <div className="flex items-center justify-center w-16 h-16 bg-muted rounded-full mx-auto mb-4">
               <Code2 className="h-8 w-8 text-muted-foreground" />
             </div>
-            <h3 className="text-lg font-medium text-foreground mb-2">No repositories found</h3>
+            <h3 className="text-lg font-medium text-foreground mb-2">
+              No repositories found
+            </h3>
             <p className="text-muted-foreground mb-4">
               Try adjusting your search or filter criteria
             </p>
-            <Button variant="outline" onClick={() => {
-              setSearchQuery("");
-              setFilterBy("all");
-            }}>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setSearchQuery("");
+                setFilterBy("all");
+              }}
+            >
               Clear Filters
             </Button>
           </div>
         )}
       </div>
 
-      <RepoSheet 
+      <RepoSheet
         repository={selectedRepo}
         isOpen={isSheetOpen}
         onClose={() => setIsSheetOpen(false)}

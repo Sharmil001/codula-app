@@ -2,9 +2,26 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import {  Sparkles, TrendingUp, Code2, BookOpen, Star, ChevronRight, Target, Zap, User, Container } from "lucide-react";
+import {
+  Sparkles,
+  TrendingUp,
+  Code2,
+  BookOpen,
+  Star,
+  ChevronRight,
+  Target,
+  Zap,
+  User,
+  Container,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { RepoSheet } from "@/components/dashboard/repo-sheet";
 import Image from "next/image";
@@ -102,7 +119,7 @@ export function DashboardLayout({ userData, userStats }: DashboardLayoutProps) {
   };
 
   const handleViewAll = () => {
-    router.push('/recommended');
+    router.push("/recommended");
   };
 
   return (
@@ -119,9 +136,11 @@ export function DashboardLayout({ userData, userStats }: DashboardLayoutProps) {
             </div>
             <div className="flex items-center space-x-4">
               {userData?.avatar_url ? (
-                <Image 
-                  src={userData.avatar_url} 
-                  alt="Profile" 
+                <Image
+                  src={userData.avatar_url}
+                  width={32}
+                  height={32}
+                  alt="Profile"
                   className="w-8 h-8 rounded-full"
                 />
               ) : (
@@ -129,7 +148,10 @@ export function DashboardLayout({ userData, userStats }: DashboardLayoutProps) {
                   <User className="h-4 w-4 text-primary" />
                 </div>
               )}
-              <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+              <Badge
+                variant="outline"
+                className="bg-green-50 text-green-700 border-green-200"
+              >
                 <Sparkles className="h-3 w-3 mr-1" />
                 Setup Complete
               </Badge>
@@ -157,12 +179,16 @@ export function DashboardLayout({ userData, userStats }: DashboardLayoutProps) {
           <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium text-muted-foreground">Connected Repos</CardTitle>
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  Connected Repos
+                </CardTitle>
                 <Container className="h-4 w-4 text-muted-foreground" />
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-foreground">{userStats?.totalRepos || 3}</div>
+              <div className="text-2xl font-bold text-foreground">
+                {userStats?.totalRepos || 3}
+              </div>
               <p className="text-xs text-muted-foreground mt-1">
                 <span className="text-green-600">+2</span> from last sync
               </p>
@@ -172,20 +198,28 @@ export function DashboardLayout({ userData, userStats }: DashboardLayoutProps) {
           <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium text-muted-foreground">Skills Tracked</CardTitle>
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  Skills Tracked
+                </CardTitle>
                 <Target className="h-4 w-4 text-muted-foreground" />
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-foreground">{userStats?.skills?.length || 12}</div>
-              <p className="text-xs text-muted-foreground mt-1">Across multiple categories</p>
+              <div className="text-2xl font-bold text-foreground">
+                {userStats?.skills?.length || 12}
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Across multiple categories
+              </p>
             </CardContent>
           </Card>
 
           <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium text-muted-foreground">AI Recommendations</CardTitle>
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  AI Recommendations
+                </CardTitle>
                 <Sparkles className="h-4 w-4 text-primary" />
               </div>
             </CardHeader>
@@ -200,7 +234,9 @@ export function DashboardLayout({ userData, userStats }: DashboardLayoutProps) {
           <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium text-muted-foreground">Match Score</CardTitle>
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  Match Score
+                </CardTitle>
                 <TrendingUp className="h-4 w-4 text-green-500" />
               </div>
             </CardHeader>
@@ -223,9 +259,12 @@ export function DashboardLayout({ userData, userStats }: DashboardLayoutProps) {
                       <Sparkles className="h-5 w-5 text-white" />
                     </div>
                     <div>
-                      <CardTitle className="text-xl">AI-Powered Recommendations</CardTitle>
+                      <CardTitle className="text-xl">
+                        AI-Powered Recommendations
+                      </CardTitle>
                       <CardDescription>
-                        Discover open source projects that match your skills and interests
+                        Discover open source projects that match your skills and
+                        interests
                       </CardDescription>
                     </div>
                   </div>
@@ -234,10 +273,14 @@ export function DashboardLayout({ userData, userStats }: DashboardLayoutProps) {
                       <Zap className="h-3 w-3 mr-1" />
                       Powered by AI
                     </Badge>
-                    <Button onClick={handleViewAll} size="sm" className="cursor-pointer">
-                    View All 
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
+                    <Button
+                      onClick={handleViewAll}
+                      size="sm"
+                      className="cursor-pointer"
+                    >
+                      View All
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
                   </div>
                 </div>
               </CardHeader>
@@ -252,10 +295,15 @@ export function DashboardLayout({ userData, userStats }: DashboardLayoutProps) {
                       <div className="flex items-center space-x-3 mb-2">
                         <div className="flex items-center space-x-2">
                           <BookOpen className="h-4 w-4 text-muted-foreground" />
-                          <h3 className="font-semibold text-foreground">{repo.name}</h3>
+                          <h3 className="font-semibold text-foreground">
+                            {repo.name}
+                          </h3>
                         </div>
                         {repo.trending && (
-                          <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
+                          <Badge
+                            variant="outline"
+                            className="bg-orange-50 text-orange-700 border-orange-200"
+                          >
                             <TrendingUp className="h-3 w-3 mr-1" />
                             Trending
                           </Badge>
@@ -264,11 +312,11 @@ export function DashboardLayout({ userData, userStats }: DashboardLayoutProps) {
                           {repo.relevanceScore}% match
                         </Badge>
                       </div>
-                      
+
                       <p className="text-sm text-muted-foreground mb-3 leading-relaxed">
                         {repo.description}
                       </p>
-                      
+
                       <div className="flex items-center space-x-4 text-xs text-muted-foreground">
                         <div className="flex items-center space-x-1">
                           <div className="w-2 h-2 bg-primary/60 rounded-full"></div>
@@ -283,12 +331,10 @@ export function DashboardLayout({ userData, userStats }: DashboardLayoutProps) {
                         </div>
                       </div>
                     </div>
-                    
+
                     <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors ml-4 flex-shrink-0" />
                   </div>
                 ))}
-                
-                
               </CardContent>
             </Card>
           </div>
@@ -303,7 +349,16 @@ export function DashboardLayout({ userData, userStats }: DashboardLayoutProps) {
               </CardHeader>
               <CardContent>
                 <div className="flex flex-wrap gap-2">
-                  {(userStats?.skills?.slice(0, 6) || ['JavaScript', 'Python', 'React', 'Node.js', 'TypeScript', 'AWS']).map((skill) => (
+                  {(
+                    userStats?.skills?.slice(0, 6) || [
+                      "JavaScript",
+                      "Python",
+                      "React",
+                      "Node.js",
+                      "TypeScript",
+                      "AWS",
+                    ]
+                  ).map((skill) => (
                     <Badge key={skill} variant="secondary" className="text-xs">
                       {skill}
                     </Badge>
@@ -325,8 +380,12 @@ export function DashboardLayout({ userData, userStats }: DashboardLayoutProps) {
                       <Container className="h-5 w-5 text-green-600" />
                     </div>
                     <div>
-                      <p className="font-medium text-green-900">GitHub Connected</p>
-                      <p className="text-sm text-green-700">All repositories synced</p>
+                      <p className="font-medium text-green-900">
+                        GitHub Connected
+                      </p>
+                      <p className="text-sm text-green-700">
+                        All repositories synced
+                      </p>
                     </div>
                   </div>
                 </CardContent>
@@ -339,19 +398,22 @@ export function DashboardLayout({ userData, userStats }: DashboardLayoutProps) {
                       <Target className="h-5 w-5 text-blue-600" />
                     </div>
                     <div>
-                      <p className="font-medium text-blue-900">Profile Complete</p>
-                      <p className="text-sm text-blue-700">Ready for recommendations</p>
+                      <p className="font-medium text-blue-900">
+                        Profile Complete
+                      </p>
+                      <p className="text-sm text-blue-700">
+                        Ready for recommendations
+                      </p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
-
             </div>
           </div>
         </div>
       </div>
 
-      <RepoSheet 
+      <RepoSheet
         repository={selectedRepo}
         isOpen={isSheetOpen}
         onClose={() => setIsSheetOpen(false)}
