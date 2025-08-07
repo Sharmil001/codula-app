@@ -140,70 +140,94 @@ function GitHubConnect({ onComplete, onNext, state, isLastStep }: StepProps) {
   const isProcessing = isConnecting || isChecking;
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col items-center justify-center p-8 space-y-6 max-w-md mx-auto">
-        <div className="text-center space-y-2">
-          <h2 className="text-2xl font-bold">Connect Your GitHub Account</h2>
-          <p className="text-muted-foreground">
-            Connect your GitHub account to import your repositories and track
-            your contributions.
-          </p>
-        </div>
+    <div className="space-y-8">
+      <div className="max-w-2xl">
+        <div className="space-y-4">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight text-foreground">Connect Your GitHub Account</h1>
+            <p className="text-lg text-muted-foreground mt-2">
+              Connect your GitHub account to import your repositories and track your contributions.
+            </p>
+          </div>
 
-        <div className="w-full">
           {state.github_connected ? (
-            <div className="flex flex-col items-center space-y-4 p-6 border border-green-200 bg-green-50 rounded-lg">
-              <div className="flex items-center space-x-2 text-green-600">
-                <Check className="h-5 w-5" />
-                <span className="font-medium">GitHub Connected</span>
+            <div className="flex items-start space-x-4 p-6 bg-green-50 border border-green-200 rounded-xl">
+              <div className="flex-shrink-0">
+                <div className="flex items-center justify-center w-12 h-12 bg-green-100 rounded-full">
+                  <Check className="h-6 w-6 text-green-600" />
+                </div>
               </div>
-              <p className="text-sm text-green-700 text-center">
-                Your GitHub account has been successfully connected.
-              </p>
+              <div className="flex-1">
+                <h3 className="text-lg font-medium text-green-900">GitHub Connected Successfully</h3>
+                <p className="text-green-700 mt-1">
+                  Your GitHub account has been successfully connected. You can now proceed to select your repositories.
+                </p>
+              </div>
             </div>
           ) : (
-            <div className="space-y-4">
-              <Button
-                onClick={connectGitHub}
-                disabled={isProcessing}
-                className="w-full flex items-center justify-center space-x-2 py-6"
-              >
-                {isProcessing ? (
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                ) : (
-                  <ContainerIcon className="h-5 w-5" />
-                )}
-                <span className="font-medium">
+            <div className="space-y-6">
+              <div className="p-6 bg-muted/30 border border-border rounded-xl">
+                <div className="flex items-start space-x-4">
+                  <div className="flex-shrink-0">
+                    <ContainerIcon className="h-8 w-8 text-primary" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-lg font-medium text-foreground mb-2">Why do we need GitHub access?</h3>
+                    <ul className="text-sm text-muted-foreground space-y-1">
+                      <li>• Access your public repositories to analyze your contributions</li>
+                      <li>• Track your coding activity and progress over time</li>
+                      <li>• Generate insights about your development patterns</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <Button
+                  onClick={connectGitHub}
+                  disabled={isProcessing}
+                  size="lg"
+                  className="w-full sm:w-auto px-8 py-6 text-base font-medium"
+                >
+                  {isProcessing ? (
+                    <Loader2 className="h-5 w-5 animate-spin mr-3" />
+                  ) : (
+                    <ContainerIcon className="h-5 w-5 mr-3" />
+                  )}
                   {isChecking
                     ? "Processing connection..."
                     : isConnecting
                       ? "Connecting to GitHub..."
                       : "Connect with GitHub"}
-                </span>
-              </Button>
+                </Button>
 
-              {error && (
-                <div className="p-3 text-sm text-red-600 bg-red-50 rounded-md text-center">
-                  {error}
-                  {retryCount > 0 && ` (Attempt ${retryCount}/3)`}
-                </div>
-              )}
-
-              <div className="text-sm text-muted-foreground text-center">
-                We&apos;ll need access to your public repositories to analyze
-                your contributions.
+                {error && (
+                  <div className="p-4 bg-destructive/5 border border-destructive/20 rounded-lg">
+                    <div className="flex items-start space-x-3">
+                      <div className="text-destructive">⚠️</div>
+                      <div>
+                        <p className="text-sm font-medium text-destructive">Connection Failed</p>
+                        <p className="text-sm text-destructive/80 mt-1">
+                          {error}
+                          {retryCount > 0 && ` (Attempt ${retryCount}/3)`}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}
         </div>
       </div>
 
-      <div className="flex justify-between pt-4 border-t border-border max-w-md mx-auto">
+      <div className="flex justify-between pt-8 border-t border-border">
         <div />
         <Button
           onClick={isLastStep ? onComplete : onNext}
           disabled={!state.github_connected}
-          variant={state.github_connected ? "default" : "outline"}
+          size="lg"
+          className="px-8"
         >
           {isLastStep
             ? "Complete Setup"
@@ -465,20 +489,29 @@ export default function OnboardingPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center space-y-4">
+          <Loader2 className="h-12 w-12 animate-spin mx-auto text-primary" />
+          <p className="text-lg text-muted-foreground">Loading your onboarding...</p>
+        </div>
       </div>
     );
   }
 
   if (error || !state) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-destructive mb-4">
-            {error || "Failed to load onboarding"}
-          </p>
-          <Button onClick={() => window.location.reload()}>Retry</Button>
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center space-y-6 max-w-md">
+          <div className="text-destructive text-6xl">⚠️</div>
+          <div>
+            <h2 className="text-2xl font-bold text-foreground mb-2">Oops! Something went wrong</h2>
+            <p className="text-muted-foreground mb-4">
+              {error || "Failed to load onboarding"}
+            </p>
+          </div>
+          <Button onClick={() => window.location.reload()} size="lg">
+            Try Again
+          </Button>
         </div>
       </div>
     );
@@ -486,8 +519,11 @@ export default function OnboardingPage() {
 
   if (isOnboardingComplete(state)) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center space-y-4">
+          <Loader2 className="h-12 w-12 animate-spin mx-auto text-primary" />
+          <p className="text-lg text-muted-foreground">Redirecting to your dashboard...</p>
+        </div>
       </div>
     );
   }
@@ -520,8 +556,17 @@ export default function OnboardingPage() {
           }
         }}
       />
-      <div className="container mx-auto max-w-4xl px-4 py-8">
-        {StepComponent && <StepComponent {...stepProps} />}
+      
+      <div className="ml-80 h-[calc(100vh-4rem)] overflow-hidden">
+        <div className="h-full flex flex-col">
+          <div className="flex-1 overflow-y-auto">
+            <div className="container mx-auto px-8 py-8 h-full">
+              <div className="max-w-4xl mx-auto h-full">
+                {StepComponent && <StepComponent {...stepProps} />}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

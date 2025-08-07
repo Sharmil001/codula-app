@@ -5,7 +5,7 @@ import { StepProps } from "@/app/onboarding/page";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import { Loader2, Twitter, AlertCircle } from "lucide-react";
+import { Loader2, Twitter, AlertCircle, User, AtSign } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/lib/supabase/client";
 
@@ -113,66 +113,161 @@ export function TwitterProfile({
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="space-y-8">
+        <div className="max-w-2xl">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Twitter Profile</h1>
+          <p className="text-lg text-muted-foreground mt-2">
+            Loading your profile information...
+          </p>
+        </div>
+        <div className="flex items-center justify-center p-12">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 max-w-md mx-auto">
-      <div className="text-center space-y-2">
-        <div className="flex items-center justify-center space-x-2">
-          <Twitter className="h-6 w-6 text-blue-500" />
-          <h2 className="text-2xl font-bold">Twitter Profile (Optional)</h2>
+    <div className="space-y-8">
+      <div className="max-w-2xl">
+        <div className="space-y-4">
+          <div className="flex items-center space-x-3">
+            <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-xl">
+              <Twitter className="h-6 w-6 text-blue-600" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight text-foreground">
+                Twitter Profile 
+                <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-muted text-muted-foreground">
+                  Optional
+                </span>
+              </h1>
+              <p className="text-lg text-muted-foreground">
+                Add your Twitter handle to showcase your social presence and connect with the community.
+              </p>
+            </div>
+          </div>
+
+          {/* Benefits Section */}
+          <div className="p-6 bg-blue-50/50 border border-blue-200/50 rounded-xl">
+            <div className="flex items-start space-x-4">
+              <div className="flex-shrink-0">
+                <User className="h-6 w-6 text-blue-600" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-medium text-blue-900 mb-2">Why add your Twitter?</h3>
+                <ul className="text-sm text-blue-700 space-y-1">
+                  <li>• Showcase your professional presence</li>
+                  <li>• Connect with other developers in the community</li>
+                  <li>• Share your coding journey and insights</li>
+                  <li>• Build your personal brand in tech</li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
-        <p className="text-muted-foreground">
-          Add your Twitter handle to showcase your social presence and connect
-          with the community. This step is optional.
-        </p>
       </div>
 
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="twitter-handle">Twitter Handle (Optional)</Label>
+      {/* Form Section */}
+      <div className="max-w-lg space-y-6">
+        <div className="space-y-3">
+          <Label htmlFor="twitter-handle" className="text-lg font-semibold text-foreground">
+            Twitter Handle
+          </Label>
+          
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <span className="text-muted-foreground">@</span>
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <AtSign className="h-5 w-5 text-muted-foreground" />
             </div>
             <Input
               id="twitter-handle"
               type="text"
-              placeholder="your_handle"
+              placeholder="your_username"
               value={twitterHandle}
               onChange={(e) => handleTwitterHandleChange(e.target.value)}
-              className="pl-8"
+              className="pl-12 h-12 text-base"
               maxLength={15}
               disabled={isSaving}
             />
           </div>
-          <p className="text-sm text-muted-foreground">
-            Enter your Twitter username without the @ symbol, or leave blank to
-            skip
-          </p>
+          
+          <div className="space-y-2">
+            <p className="text-sm text-muted-foreground">
+              Enter your Twitter username without the @ symbol. You can always add this later if you prefer to skip for now.
+            </p>
+            
+            {twitterHandle && (
+              <div className="flex items-center space-x-2 text-sm">
+                <span className="text-muted-foreground">Preview:</span>
+                <span className="font-medium text-foreground">
+                  twitter.com/{twitterHandle}
+                </span>
+              </div>
+            )}
+          </div>
         </div>
 
+        {/* Error Display */}
         {error && (
-          <div className="flex items-center space-x-2 p-3 text-sm text-red-600 bg-red-50 rounded-md">
-            <AlertCircle className="h-4 w-4" />
-            <span>{error}</span>
+          <div className="p-4 bg-destructive/5 border border-destructive/20 rounded-lg">
+            <div className="flex items-start space-x-3">
+              <AlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="font-medium text-destructive">Invalid Twitter handle</p>
+                <p className="text-sm text-destructive/80 mt-1">{error}</p>
+              </div>
+            </div>
           </div>
         )}
+
+        {/* Skip Option */}
+        <div className="p-4 bg-muted/30 border border-border rounded-lg">
+          <div className="flex items-start space-x-3">
+            <div className="text-lg">💡</div>
+            <div>
+              <p className="text-sm font-medium text-foreground">Don't have Twitter or prefer to skip?</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                No problem! This step is completely optional. You can always add your Twitter handle later in your profile settings.
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="flex justify-between pt-4 border-t border-border">
-        <Button variant="outline" onClick={onPrevious} disabled={isSaving}>
+      {/* Navigation */}
+      <div className="flex justify-between items-center pt-8 border-t border-border">
+        <Button
+          variant="outline"
+          onClick={onPrevious}
+          disabled={isSaving}
+          size="lg"
+          className="px-8"
+        >
           Previous
         </Button>
 
-        <Button onClick={handleContinue} disabled={isSaving}>
-          {isSaving && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-          {isLastStep ? "Complete Setup" : "Continue"}
-        </Button>
+        <div className="flex space-x-3">
+          <Button
+            variant="outline"
+            onClick={handleContinue}
+            disabled={isSaving}
+            size="lg"
+            className="px-6"
+          >
+            {isSaving && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+            Skip for now
+          </Button>
+          
+          <Button
+            onClick={handleContinue}
+            disabled={isSaving}
+            size="lg"
+            className="px-8"
+          >
+            {isSaving && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+            {isLastStep ? "Complete Setup" : "Continue"}
+          </Button>
+        </div>
       </div>
     </div>
   );
