@@ -14,8 +14,8 @@ import {
   Calendar,
 } from "lucide-react";
 import { StepProps } from "@/app/onboarding/page";
-import { supabase } from "@/lib/supabase/client";
 import { GitHubRepo } from "@/types/github";
+import { createClient } from "@/lib/supabase/client";
 
 const MAX_SELECTIONS = 3;
 
@@ -89,7 +89,7 @@ export function RepoSelector({ onComplete, state }: StepProps) {
           activity_data: activity,
         };
 
-        const { error } = await supabase
+        const { error } = await createClient()
           .from("github_repos")
           .upsert(repoData, { onConflict: "id" });
 
@@ -153,7 +153,7 @@ export function RepoSelector({ onComplete, state }: StepProps) {
 
   const fetchPreviouslySelectedRepos = useCallback(async () => {
     try {
-      const { data: userRepos, error } = await supabase
+      const { data: userRepos, error } = await createClient()
         .from("github_repos")
         .select("id")
         .eq("user_id", state.user_id);
@@ -212,7 +212,8 @@ export function RepoSelector({ onComplete, state }: StepProps) {
 
   const handleRetry = useCallback(async () => {
     try {
-      const { error: refreshError } = await supabase.auth.refreshSession();
+      const { error: refreshError } =
+        await createClient().auth.refreshSession();
       if (refreshError) throw refreshError;
       await fetchRepos();
     } catch {
@@ -243,7 +244,7 @@ export function RepoSelector({ onComplete, state }: StepProps) {
 
       await Promise.all(unsyncedRepos.map((repo) => syncRepository(repo)));
 
-      const { error: onboardingError } = await supabase
+      const { error: onboardingError } = await createClient()
         .from("user_onboarding")
         .upsert(
           {

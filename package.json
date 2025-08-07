@@ -10,7 +10,8 @@
     "lint": "next lint",
     "format": "prettier --write .",
     "check-types": "tsc --noEmit",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "pre-commit-check": "sh .husky/pre-commit"
   },
   "dependencies": {
     "@octokit/rest": "^22.0.0",

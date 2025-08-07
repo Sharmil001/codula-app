@@ -6,11 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Check, ContainerIcon, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { OnboardingHeader } from "@/components/onboarding/onboarding-header";
-import { supabase } from "@/lib/supabase/client";
 import { RepoSelector } from "@/components/onboarding/repo-selector";
 import { TwitterProfile } from "@/components/onboarding/twitter-handle";
 import { Skills } from "@/components/onboarding/skills-questionnaire";
 import { OnboardingState } from "@/types/onboarding";
+import { createClient } from "@/lib/supabase/client";
 
 const STEPS = [
   "Connect GitHub",
@@ -72,11 +72,11 @@ function GitHubConnect({ onComplete, onNext, state, isLastStep }: StepProps) {
           const {
             data: { session },
             error: refreshError,
-          } = await supabase.auth.refreshSession();
+          } = await createClient().auth.refreshSession();
           if (refreshError || !session?.user)
             throw new Error("Failed to refresh session");
 
-          const { data: currentOnboarding } = await supabase
+          const { data: currentOnboarding } = await createClient()
             .from("user_onboarding")
             .select("completed_steps")
             .eq("user_id", session.user.id)
@@ -88,12 +88,14 @@ function GitHubConnect({ onComplete, onNext, state, isLastStep }: StepProps) {
             ? existingSteps
             : [...existingSteps, 1];
 
-          await supabase.from("user_onboarding").upsert({
-            user_id: session.user.id,
-            github_connected: true,
-            completed_steps: updatedSteps.map(String),
-            updated_at: new Date().toISOString(),
-          });
+          await createClient()
+            .from("user_onboarding")
+            .upsert({
+              user_id: session.user.id,
+              github_connected: true,
+              completed_steps: updatedSteps.map(String),
+              updated_at: new Date().toISOString(),
+            });
 
           toast.success("GitHub connected successfully!");
           onComplete();
@@ -118,7 +120,7 @@ function GitHubConnect({ onComplete, onNext, state, isLastStep }: StepProps) {
       setIsConnecting(true);
       setError(null);
 
-      const { error } = await supabase.auth.signInWithOAuth({
+      const { error } = await createClient().auth.signInWithOAuth({
         provider: "github",
         options: {
           redirectTo: `${window.location.origin}/onboarding?step=${searchParams.get("step") || "1"}`,
@@ -307,7 +309,7 @@ export default function OnboardingPage() {
       const {
         data: { user },
         error: userError,
-      } = await supabase.auth.getUser();
+      } = await createClient().auth.getUser();
 
       if (userError || !user) {
         setState({
@@ -325,11 +327,12 @@ export default function OnboardingPage() {
         user.app_metadata?.providers?.includes("github") ||
         user.identities?.some((identity) => identity.provider === "github");
 
-      const { data: onboardingData, error: onboardingError } = await supabase
-        .from("user_onboarding")
-        .select("*")
-        .eq("user_id", user.id)
-        .single();
+      const { data: onboardingData, error: onboardingError } =
+        await createClient()
+          .from("user_onboarding")
+          .select("*")
+          .eq("user_id", user.id)
+          .single();
 
       let finalOnboardingData = onboardingData;
 
@@ -343,7 +346,7 @@ export default function OnboardingPage() {
           completed_steps: isGitHubUser ? ["1"] : [],
         };
 
-        const { data: newData, error: createError } = await supabase
+        const { data: newData, error: createError } = await createClient()
           .from("user_onboarding")
           .insert(initialData)
           .select()
@@ -356,7 +359,7 @@ export default function OnboardingPage() {
       }
 
       // Verify repos exist
-      const { data: userRepos } = await supabase
+      const { data: userRepos } = await createClient()
         .from("github_repos")
         .select("id")
         .eq("user_id", user.id);
@@ -388,7 +391,7 @@ export default function OnboardingPage() {
         needsUpdate ||
         actualReposSelected !== finalOnboardingData?.repos_selected
       ) {
-        await supabase
+        await createClient()
           .from("user_onboarding")
           .update({
             github_connected: githubConnected,
@@ -440,7 +443,7 @@ export default function OnboardingPage() {
 
       // Verify repos for step 2
       if (currentStep === 2) {
-        const { data: userRepos, error: repoError } = await supabase
+        const { data: userRepos, error: repoError } = await createClient()
           .from("github_repos")
           .select("id")
           .eq("user_id", state.user_id);
@@ -465,7 +468,7 @@ export default function OnboardingPage() {
         updated_at: new Date().toISOString(),
       };
 
-      const { error: updateError } = await supabase
+      const { error: updateError } = await createClient()
         .from("user_onboarding")
         .update(updateData)
         .eq("user_id", state.user_id);

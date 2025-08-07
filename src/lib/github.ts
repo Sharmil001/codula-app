@@ -1,6 +1,6 @@
 import { GitHubActivity, GitHubApiError, GitHubRepo } from "@/types/github";
-import { supabase } from "./supabase/client";
 import { Octokit } from "octokit";
+import { createClient } from "./supabase/client";
 
 const CONFIG = {
   OAUTH_WAIT_TIME: 1500,
@@ -14,13 +14,13 @@ class TokenManager {
     const {
       data: { user },
       error,
-    } = await supabase.auth.getUser();
+    } = await createClient().auth.getUser();
     if (error || !user) throw new Error("Authentication required");
     return user;
   }
 
   static async store(userId: string, token: string): Promise<void> {
-    await supabase.from("user_tokens").upsert(
+    await createClient().from("user_tokens").upsert(
       {
         user_id: userId,
         provider: "github",
@@ -36,13 +36,13 @@ class TokenManager {
 
     const {
       data: { session },
-    } = await supabase.auth.getSession();
+    } = await createClient().auth.getSession();
     if (session?.provider_token) {
       await this.store(user.id, session.provider_token); // Cache for later
       return session.provider_token;
     }
 
-    const { data } = await supabase
+    const { data } = await createClient()
       .from("user_tokens")
       .select("access_token")
       .eq("user_id", user.id)
@@ -65,7 +65,7 @@ class TokenManager {
 
   static async invalidate(): Promise<void> {
     const user = await this.getCurrentUser();
-    await supabase
+    await createClient()
       .from("user_tokens")
       .delete()
       .eq("user_id", user.id)
@@ -310,18 +310,18 @@ export async function handleGitHubOAuthCallback(): Promise<boolean> {
 
     const {
       data: { session },
-    } = await supabase.auth.getSession();
+    } = await createClient().auth.getSession();
     if (!session?.provider_token || !session.user) return false;
 
     await TokenManager.store(session.user.id, session.provider_token);
 
     await Promise.all([
-      supabase.from("profiles").upsert({
+      createClient().from("profiles").upsert({
         id: session.user.id,
         github_connected: true,
         updated_at: new Date().toISOString(),
       }),
-      supabase.from("user_onboarding").upsert({
+      createClient().from("user_onboarding").upsert({
         user_id: session.user.id,
         github_connected: true,
         updated_at: new Date().toISOString(),
@@ -345,7 +345,7 @@ export async function hasGitHubConnection(): Promise<boolean> {
 }
 
 export async function initGitHubOAuth(redirectUrl: string): Promise<void> {
-  const { error } = await supabase.auth.signInWithOAuth({
+  const { error } = await createClient().auth.signInWithOAuth({
     provider: "github",
     options: {
       redirectTo: redirectUrl,

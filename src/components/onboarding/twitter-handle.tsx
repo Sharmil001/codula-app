@@ -7,7 +7,7 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Loader2, Twitter, AlertCircle, User, AtSign } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/client";
 
 export function TwitterProfile({
   onComplete,
@@ -26,7 +26,7 @@ export function TwitterProfile({
 
       try {
         setIsLoading(true);
-        const { data, error } = await supabase
+        const { data, error } = await createClient()
           .from("user_profiles")
           .select("twitter_handle")
           .eq("user_id", state.user_id)
@@ -77,7 +77,7 @@ export function TwitterProfile({
       setIsSaving(true);
       setError(null);
 
-      const { error: profileError } = await supabase
+      const { error: profileError } = await createClient()
         .from("user_profiles")
         .upsert({
           user_id: state.user_id,
@@ -87,7 +87,7 @@ export function TwitterProfile({
 
       if (profileError) throw profileError;
 
-      const { error: onboardingError } = await supabase
+      const { error: onboardingError } = await createClient()
         .from("user_onboarding")
         .update({
           twitter_added: true,

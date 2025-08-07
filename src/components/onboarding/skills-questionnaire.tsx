@@ -8,8 +8,8 @@ import { Label } from "../ui/label";
 import { Badge } from "../ui/badge";
 import { Loader2, Code, Plus, X, Lightbulb, Zap } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/lib/supabase/client";
 import { POPULAR_SKILLS, SKILL_CATEGORIES } from "@/lib/utils";
+import { createClient } from "@/lib/supabase/client";
 
 type SkillCategory = keyof typeof SKILL_CATEGORIES | "other_skills";
 
@@ -146,12 +146,12 @@ export function Skills({ onComplete, state, onPrevious }: StepProps) {
 
     try {
       const [profileResult, onboardingResult] = await Promise.all([
-        supabase.from("user_profiles").upsert({
+        createClient().from("user_profiles").upsert({
           user_id: state.user_id,
           skills: skillsState.skills,
           updated_at: new Date().toISOString(),
         }),
-        supabase
+        createClient()
           .from("user_onboarding")
           .update({
             skills_added: true,
@@ -181,7 +181,7 @@ export function Skills({ onComplete, state, onPrevious }: StepProps) {
     setSkillsState((prev) => ({ ...prev, isLoading: true }));
 
     try {
-      const { data, error } = await supabase
+      const { data, error } = await createClient()
         .from("user_profiles")
         .select("skills")
         .eq("user_id", state.user_id)
