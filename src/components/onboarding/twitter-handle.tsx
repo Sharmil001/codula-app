@@ -151,7 +151,6 @@ export function TwitterProfile({
             </div>
           </div>
 
-          {/* Benefits Section */}
           <div className="p-6 bg-blue-50/50 border border-blue-200/50 rounded-xl">
             <div className="flex items-start space-x-4">
               <div className="flex-shrink-0">
@@ -173,7 +172,6 @@ export function TwitterProfile({
         </div>
       </div>
 
-      {/* Form Section */}
       <div className="max-w-lg space-y-6">
         <div className="space-y-3">
           <Label
@@ -216,7 +214,6 @@ export function TwitterProfile({
           </div>
         </div>
 
-        {/* Error Display */}
         {error && (
           <div className="p-4 bg-destructive/5 border border-destructive/20 rounded-lg">
             <div className="flex items-start space-x-3">
@@ -231,7 +228,6 @@ export function TwitterProfile({
           </div>
         )}
 
-        {/* Skip Option */}
         <div className="p-4 bg-muted/30 border border-border rounded-lg">
           <div className="flex items-start space-x-3">
             <div className="text-lg">💡</div>
@@ -248,7 +244,6 @@ export function TwitterProfile({
         </div>
       </div>
 
-      {/* Navigation */}
       <div className="flex justify-between items-center pt-8 border-t border-border">
         <Button
           variant="outline"
