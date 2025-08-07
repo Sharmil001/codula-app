@@ -144,9 +144,12 @@ function GitHubConnect({ onComplete, onNext, state, isLastStep }: StepProps) {
       <div className="max-w-2xl">
         <div className="space-y-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-foreground">Connect Your GitHub Account</h1>
+            <h1 className="text-3xl font-bold tracking-tight text-foreground">
+              Connect Your GitHub Account
+            </h1>
             <p className="text-lg text-muted-foreground mt-2">
-              Connect your GitHub account to import your repositories and track your contributions.
+              Connect your GitHub account to import your repositories and track
+              your contributions.
             </p>
           </div>
 
@@ -158,9 +161,12 @@ function GitHubConnect({ onComplete, onNext, state, isLastStep }: StepProps) {
                 </div>
               </div>
               <div className="flex-1">
-                <h3 className="text-lg font-medium text-green-900">GitHub Connected Successfully</h3>
+                <h3 className="text-lg font-medium text-green-900">
+                  GitHub Connected Successfully
+                </h3>
                 <p className="text-green-700 mt-1">
-                  Your GitHub account has been successfully connected. You can now proceed to select your repositories.
+                  Your GitHub account has been successfully connected. You can
+                  now proceed to select your repositories.
                 </p>
               </div>
             </div>
@@ -172,11 +178,20 @@ function GitHubConnect({ onComplete, onNext, state, isLastStep }: StepProps) {
                     <ContainerIcon className="h-8 w-8 text-primary" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-lg font-medium text-foreground mb-2">Why do we need GitHub access?</h3>
+                    <h3 className="text-lg font-medium text-foreground mb-2">
+                      Why do we need GitHub access?
+                    </h3>
                     <ul className="text-sm text-muted-foreground space-y-1">
-                      <li>• Access your public repositories to analyze your contributions</li>
-                      <li>• Track your coding activity and progress over time</li>
-                      <li>• Generate insights about your development patterns</li>
+                      <li>
+                        • Access your public repositories to analyze your
+                        contributions
+                      </li>
+                      <li>
+                        • Track your coding activity and progress over time
+                      </li>
+                      <li>
+                        • Generate insights about your development patterns
+                      </li>
                     </ul>
                   </div>
                 </div>
@@ -206,7 +221,9 @@ function GitHubConnect({ onComplete, onNext, state, isLastStep }: StepProps) {
                     <div className="flex items-start space-x-3">
                       <div className="text-destructive">⚠️</div>
                       <div>
-                        <p className="text-sm font-medium text-destructive">Connection Failed</p>
+                        <p className="text-sm font-medium text-destructive">
+                          Connection Failed
+                        </p>
                         <p className="text-sm text-destructive/80 mt-1">
                           {error}
                           {retryCount > 0 && ` (Attempt ${retryCount}/3)`}
@@ -492,7 +509,9 @@ export default function OnboardingPage() {
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center space-y-4">
           <Loader2 className="h-12 w-12 animate-spin mx-auto text-primary" />
-          <p className="text-lg text-muted-foreground">Loading your onboarding...</p>
+          <p className="text-lg text-muted-foreground">
+            Loading your onboarding...
+          </p>
         </div>
       </div>
     );
@@ -504,7 +523,9 @@ export default function OnboardingPage() {
         <div className="text-center space-y-6 max-w-md">
           <div className="text-destructive text-6xl">⚠️</div>
           <div>
-            <h2 className="text-2xl font-bold text-foreground mb-2">Oops! Something went wrong</h2>
+            <h2 className="text-2xl font-bold text-foreground mb-2">
+              Oops! Something went wrong
+            </h2>
             <p className="text-muted-foreground mb-4">
               {error || "Failed to load onboarding"}
             </p>
@@ -522,7 +543,9 @@ export default function OnboardingPage() {
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center space-y-4">
           <Loader2 className="h-12 w-12 animate-spin mx-auto text-primary" />
-          <p className="text-lg text-muted-foreground">Redirecting to your dashboard...</p>
+          <p className="text-lg text-muted-foreground">
+            Redirecting to your dashboard...
+          </p>
         </div>
       </div>
     );
@@ -556,7 +579,7 @@ export default function OnboardingPage() {
           }
         }}
       />
-      
+
       <div className="ml-80 h-[calc(100vh-4rem)] overflow-hidden">
         <div className="h-full flex flex-col">
           <div className="flex-1 overflow-y-auto">

@@ -4,7 +4,15 @@ import { getUserRepos, getRepoActivity } from "@/lib/github";
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Loader2, AlertCircle, RefreshCw, GitBranch, Star, GitFork, Calendar } from "lucide-react";
+import {
+  Loader2,
+  AlertCircle,
+  RefreshCw,
+  GitBranch,
+  Star,
+  GitFork,
+  Calendar,
+} from "lucide-react";
 import { StepProps } from "@/app/onboarding/page";
 import { supabase } from "@/lib/supabase/client";
 import { GitHubRepo } from "@/types/github";
@@ -267,7 +275,9 @@ export function RepoSelector({ onComplete, state }: StepProps) {
     return (
       <div className="space-y-8">
         <div className="max-w-2xl">
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Select Repositories</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">
+            Select Repositories
+          </h1>
           <p className="text-lg text-muted-foreground mt-2">
             Loading your repositories from GitHub...
           </p>
@@ -284,7 +294,9 @@ export function RepoSelector({ onComplete, state }: StepProps) {
     return (
       <div className="space-y-8">
         <div className="max-w-2xl">
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Select Repositories</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">
+            Select Repositories
+          </h1>
           <p className="text-lg text-muted-foreground mt-2">
             We encountered an issue loading your repositories.
           </p>
@@ -294,7 +306,9 @@ export function RepoSelector({ onComplete, state }: StepProps) {
             <AlertCircle className="h-8 w-8 text-destructive" />
           </div>
           <div className="max-w-md">
-            <h3 className="text-xl font-semibold text-foreground mb-2">Unable to load repositories</h3>
+            <h3 className="text-xl font-semibold text-foreground mb-2">
+              Unable to load repositories
+            </h3>
             <p className="text-muted-foreground">{loadingState.error}</p>
           </div>
           <div className="flex gap-3">
@@ -302,7 +316,10 @@ export function RepoSelector({ onComplete, state }: StepProps) {
               <RefreshCw className="h-4 w-4 mr-2" />
               Try Again
             </Button>
-            <Button onClick={() => (window.location.href = "/onboarding?step=1")} size="lg">
+            <Button
+              onClick={() => (window.location.href = "/onboarding?step=1")}
+              size="lg"
+            >
               Reconnect GitHub
             </Button>
           </div>
@@ -315,7 +332,9 @@ export function RepoSelector({ onComplete, state }: StepProps) {
     return (
       <div className="space-y-8">
         <div className="max-w-2xl">
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Select Repositories</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">
+            Select Repositories
+          </h1>
           <p className="text-lg text-muted-foreground mt-2">
             No repositories found in your GitHub account.
           </p>
@@ -325,9 +344,13 @@ export function RepoSelector({ onComplete, state }: StepProps) {
             <GitBranch className="h-8 w-8 text-muted-foreground" />
           </div>
           <div className="max-w-md">
-            <h3 className="text-xl font-semibold text-foreground mb-2">No repositories found</h3>
+            <h3 className="text-xl font-semibold text-foreground mb-2">
+              No repositories found
+            </h3>
             <p className="text-muted-foreground">
-              We couldn't find any repositories in your GitHub account. Make sure you have at least one repository or check your permissions.
+              We couldn&apos;t find any repositories in your GitHub account.
+              Make sure you have at least one repository or check your
+              permissions.
             </p>
           </div>
           <div className="flex gap-3">
@@ -335,7 +358,9 @@ export function RepoSelector({ onComplete, state }: StepProps) {
               <RefreshCw className="h-4 w-4 mr-2" />
               Refresh
             </Button>
-            <Button onClick={onComplete} size="lg">Skip for now</Button>
+            <Button onClick={onComplete} size="lg">
+              Skip for now
+            </Button>
           </div>
         </div>
       </div>
@@ -348,7 +373,9 @@ export function RepoSelector({ onComplete, state }: StepProps) {
         <div className="space-y-4">
           <div>
             <h1 className="text-3xl font-bold tracking-tight text-foreground">
-              {isStepCompleted ? "Your Selected Repositories" : "Select repositories to track"}
+              {isStepCompleted
+                ? "Your Selected Repositories"
+                : "Select repositories to track"}
             </h1>
             <p className="text-lg text-muted-foreground mt-2">
               {isStepCompleted
@@ -356,17 +383,24 @@ export function RepoSelector({ onComplete, state }: StepProps) {
                 : `Choose up to ${MAX_SELECTIONS} repositories to track your contributions and sync their activity data.`}
             </p>
           </div>
-          
+
           <div className="flex flex-wrap items-center gap-4 p-4 bg-muted/30 rounded-lg border">
             <div className="text-sm text-foreground">
-              <span className="font-medium">{repoState.repos.length}</span> repositories found
+              <span className="font-medium">{repoState.repos.length}</span>{" "}
+              repositories found
             </div>
             <div className="text-sm text-foreground">
-              <span className="font-medium">{repoState.selectedRepos.length}</span> of {MAX_SELECTIONS} selected
+              <span className="font-medium">
+                {repoState.selectedRepos.length}
+              </span>{" "}
+              of {MAX_SELECTIONS} selected
             </div>
             {repoState.previouslySelectedRepos.size > 0 && (
               <div className="text-sm text-green-600">
-                <span className="font-medium">{repoState.previouslySelectedRepos.size}</span> already synced
+                <span className="font-medium">
+                  {repoState.previouslySelectedRepos.size}
+                </span>{" "}
+                already synced
               </div>
             )}
           </div>
@@ -377,113 +411,130 @@ export function RepoSelector({ onComplete, state }: StepProps) {
         <div className="h-full overflow-y-auto pr-2 -mr-2">
           <div className="grid gap-4 pb-4">
             {repoState.repos.map((repo) => {
-            const isSelected = repoState.selectedRepos.includes(repo.id);
-            const isPreviouslySelected = repoState.previouslySelectedRepos.has(repo.id);
-            const isSynced = repoState.syncedRepos.has(repo.id);
-            const isDisabled = isPreviouslySelected || (!isSelected && availableSelections === 0);
+              const isSelected = repoState.selectedRepos.includes(repo.id);
+              const isPreviouslySelected =
+                repoState.previouslySelectedRepos.has(repo.id);
+              const isSynced = repoState.syncedRepos.has(repo.id);
+              const isDisabled =
+                isPreviouslySelected ||
+                (!isSelected && availableSelections === 0);
 
-            return (
-              <div
-                key={repo.id}
-                className={`group p-6 rounded-xl border transition-all duration-200 ${
-                  isSelected
-                    ? isPreviouslySelected
-                      ? "border-green-300 bg-green-50/50 shadow-sm"
-                      : "border-primary/30 bg-primary/5 shadow-sm"
-                    : "border-border bg-card hover:bg-muted/30 hover:border-border/60"
-                }`}
-              >
-                <div className="flex items-start space-x-4">
-                  <div className="flex-shrink-0 mt-1">
-                    <input
-                      type="checkbox"
-                      checked={isSelected}
-                      onChange={() => toggleRepo(repo.id)}
-                      disabled={isDisabled}
-                      className="h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary disabled:opacity-50"
-                    />
-                  </div>
+              return (
+                <div
+                  key={repo.id}
+                  className={`group p-6 rounded-xl border transition-all duration-200 ${
+                    isSelected
+                      ? isPreviouslySelected
+                        ? "border-green-300 bg-green-50/50 shadow-sm"
+                        : "border-primary/30 bg-primary/5 shadow-sm"
+                      : "border-border bg-card hover:bg-muted/30 hover:border-border/60"
+                  }`}
+                >
+                  <div className="flex items-start space-x-4">
+                    <div className="flex-shrink-0 mt-1">
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={() => toggleRepo(repo.id)}
+                        disabled={isDisabled}
+                        className="h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary disabled:opacity-50"
+                      />
+                    </div>
 
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center space-x-3">
-                        <h3 className="text-lg font-semibold text-foreground truncate">
-                          {repo.name}
-                        </h3>
-                        
-                        <div className="flex items-center space-x-2">
-                          {isPreviouslySelected && (
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                              Previously Synced
-                            </span>
-                          )}
-                          {isSynced && !isPreviouslySelected && (
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                              Synced
-                            </span>
-                          )}
-                          {repo.private && (
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
-                              Private
-                            </span>
-                          )}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center space-x-3">
+                          <h3 className="text-lg font-semibold text-foreground truncate">
+                            {repo.name}
+                          </h3>
+
+                          <div className="flex items-center space-x-2">
+                            {isPreviouslySelected && (
+                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                Previously Synced
+                              </span>
+                            )}
+                            {isSynced && !isPreviouslySelected && (
+                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                Synced
+                              </span>
+                            )}
+                            {repo.private && (
+                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                                Private
+                              </span>
+                            )}
+                          </div>
                         </div>
+
+                        {!isPreviouslySelected && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => syncRepository(repo)}
+                            disabled={
+                              loadingState.syncingRepo === repo.id ||
+                              !isSelected
+                            }
+                            className="opacity-0 group-hover:opacity-100 transition-opacity"
+                            title={
+                              isSelected
+                                ? "Sync repository"
+                                : "Select repository first"
+                            }
+                          >
+                            {loadingState.syncingRepo === repo.id ? (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                              <RefreshCw className="h-4 w-4" />
+                            )}
+                          </Button>
+                        )}
                       </div>
 
-                      {!isPreviouslySelected && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => syncRepository(repo)}
-                          disabled={loadingState.syncingRepo === repo.id || !isSelected}
-                          className="opacity-0 group-hover:opacity-100 transition-opacity"
-                          title={isSelected ? "Sync repository" : "Select repository first"}
-                        >
-                          {loadingState.syncingRepo === repo.id ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                          ) : (
-                            <RefreshCw className="h-4 w-4" />
-                          )}
-                        </Button>
-                      )}
-                    </div>
+                      <div className="mb-4">
+                        {repo.description ? (
+                          <p className="text-muted-foreground leading-relaxed">
+                            {repo.description}
+                          </p>
+                        ) : (
+                          <p className="text-muted-foreground italic">
+                            No description available
+                          </p>
+                        )}
+                      </div>
 
-                    <div className="mb-4">
-                      {repo.description ? (
-                        <p className="text-muted-foreground leading-relaxed">{repo.description}</p>
-                      ) : (
-                        <p className="text-muted-foreground italic">No description available</p>
-                      )}
-                    </div>
+                      <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+                        {repo.language && (
+                          <div className="flex items-center space-x-1">
+                            <div className="w-3 h-3 rounded-full bg-primary/60"></div>
+                            <span>{repo.language}</span>
+                          </div>
+                        )}
 
-                    <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-                      {repo.language && (
                         <div className="flex items-center space-x-1">
-                          <div className="w-3 h-3 rounded-full bg-primary/60"></div>
-                          <span>{repo.language}</span>
+                          <Star className="h-3.5 w-3.5" />
+                          <span>{repo.stargazers_count || 0}</span>
                         </div>
-                      )}
-                      
-                      <div className="flex items-center space-x-1">
-                        <Star className="h-3.5 w-3.5" />
-                        <span>{repo.stargazers_count || 0}</span>
-                      </div>
-                      
-                      <div className="flex items-center space-x-1">
-                        <GitFork className="h-3.5 w-3.5" />
-                        <span>{repo.forks_count || 0}</span>
-                      </div>
-                      
-                      <div className="flex items-center space-x-1">
-                        <Calendar className="h-3.5 w-3.5" />
-                        <span>Updated {new Date(repo.updated_at).toLocaleDateString()}</span>
+
+                        <div className="flex items-center space-x-1">
+                          <GitFork className="h-3.5 w-3.5" />
+                          <span>{repo.forks_count || 0}</span>
+                        </div>
+
+                        <div className="flex items-center space-x-1">
+                          <Calendar className="h-3.5 w-3.5" />
+                          <span>
+                            Updated{" "}
+                            {new Date(repo.updated_at).toLocaleDateString()}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            );
-                      })}
+              );
+            })}
           </div>
         </div>
       </div>

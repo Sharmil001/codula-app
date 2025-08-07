@@ -21,29 +21,29 @@ type OnboardingHeaderProps = {
 };
 
 const steps: Step[] = [
-  { 
-    number: 1, 
-    name: "Connect GitHub", 
+  {
+    number: 1,
+    name: "Connect GitHub",
     required: true,
-    description: "Link your GitHub account to get started"
+    description: "Link your GitHub account to get started",
   },
-  { 
-    number: 2, 
-    name: "Select Repos", 
+  {
+    number: 2,
+    name: "Select Repos",
     required: true,
-    description: "Choose repositories to track and analyze"
+    description: "Choose repositories to track and analyze",
   },
-  { 
-    number: 3, 
-    name: "Twitter Profile", 
+  {
+    number: 3,
+    name: "Twitter Profile",
     required: false,
-    description: "Add your social media presence"
+    description: "Add your social media presence",
   },
-  { 
-    number: 4, 
-    name: "Skills", 
+  {
+    number: 4,
+    name: "Skills",
     required: true,
-    description: "Tell us about your technical expertise"
+    description: "Tell us about your technical expertise",
   },
 ];
 
@@ -81,7 +81,10 @@ export function OnboardingHeader({
       <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <Link href="/" className="text-xl font-bold text-foreground hover:text-primary transition-colors">
+            <Link
+              href="/"
+              className="text-xl font-bold text-foreground hover:text-primary transition-colors"
+            >
               Codula
             </Link>
             <div className="text-sm text-muted-foreground">
@@ -96,14 +99,18 @@ export function OnboardingHeader({
         <div className="space-y-6">
           {/* Progress Overview */}
           <div className="space-y-3">
-            <h2 className="text-lg font-semibold text-foreground">Setup Progress</h2>
+            <h2 className="text-lg font-semibold text-foreground">
+              Setup Progress
+            </h2>
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Progress</span>
-                <span className="font-medium text-foreground">{completedCount}/{steps.length}</span>
+                <span className="font-medium text-foreground">
+                  {completedCount}/{steps.length}
+                </span>
               </div>
               <div className="w-full bg-muted rounded-full h-2">
-                <div 
+                <div
                   className="bg-gradient-to-r from-primary to-primary/80 h-2 rounded-full transition-all duration-500 ease-out"
                   style={{ width: `${progressPercentage}%` }}
                 />
@@ -112,7 +119,9 @@ export function OnboardingHeader({
           </div>
 
           <div className="space-y-1">
-            <h3 className="text-sm font-medium text-muted-foreground mb-4">SETUP STEPS</h3>
+            <h3 className="text-sm font-medium text-muted-foreground mb-4">
+              SETUP STEPS
+            </h3>
             {steps.map((step, index) => {
               const isCurrentStep = currentStep === step.number;
               const isCompleted = isStepCompleted(step.number);
@@ -138,7 +147,7 @@ export function OnboardingHeader({
                           : isAccessible
                             ? "bg-background border-border hover:bg-muted/50 hover:border-border/60"
                             : "bg-muted/30 border-muted cursor-not-allowed",
-                      !isDisabled && "hover:shadow-sm"
+                      !isDisabled && "hover:shadow-sm",
                     )}
                     title={
                       allStepsCompleted
@@ -160,7 +169,7 @@ export function OnboardingHeader({
                                 ? "bg-green-500 text-white"
                                 : isAccessible
                                   ? "bg-muted text-muted-foreground border-2 border-primary/20"
-                                  : "bg-muted text-muted-foreground/50"
+                                  : "bg-muted text-muted-foreground/50",
                           )}
                         >
                           {isCompleted ? (
@@ -176,16 +185,18 @@ export function OnboardingHeader({
                       {/* Step Content */}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center space-x-2">
-                          <h4 className={cn(
-                            "font-medium text-sm",
-                            isCurrentStep
-                              ? "text-primary"
-                              : isCompleted
-                                ? "text-green-700"
-                                : isAccessible
-                                  ? "text-foreground"
-                                  : "text-muted-foreground/70"
-                          )}>
+                          <h4
+                            className={cn(
+                              "font-medium text-sm",
+                              isCurrentStep
+                                ? "text-primary"
+                                : isCompleted
+                                  ? "text-green-700"
+                                  : isAccessible
+                                    ? "text-foreground"
+                                    : "text-muted-foreground/70",
+                            )}
+                          >
                             {step.name}
                           </h4>
                           {!step.required && (
@@ -194,16 +205,18 @@ export function OnboardingHeader({
                             </span>
                           )}
                         </div>
-                        <p className={cn(
-                          "text-xs mt-1 leading-relaxed",
-                          isCurrentStep
-                            ? "text-primary/70"
-                            : isCompleted
-                              ? "text-green-600"
-                              : isAccessible
-                                ? "text-muted-foreground"
-                                : "text-muted-foreground/50"
-                        )}>
+                        <p
+                          className={cn(
+                            "text-xs mt-1 leading-relaxed",
+                            isCurrentStep
+                              ? "text-primary/70"
+                              : isCompleted
+                                ? "text-green-600"
+                                : isAccessible
+                                  ? "text-muted-foreground"
+                                  : "text-muted-foreground/50",
+                          )}
+                        >
                           {step.description}
                         </p>
                       </div>
@@ -219,7 +232,7 @@ export function OnboardingHeader({
                             ? "bg-green-300"
                             : isCurrentStep
                               ? "bg-primary/30"
-                              : "bg-border"
+                              : "bg-border",
                         )}
                       />
                     </div>
@@ -231,7 +244,9 @@ export function OnboardingHeader({
 
           <div className="pt-6 border-t border-border">
             <div className="space-y-3">
-              <h3 className="text-sm font-medium text-muted-foreground">NEED HELP?</h3>
+              <h3 className="text-sm font-medium text-muted-foreground">
+                NEED HELP?
+              </h3>
               <div className="text-xs text-muted-foreground space-y-2">
                 <p>• Complete each step in order</p>
                 <p>• All required steps must be finished</p>

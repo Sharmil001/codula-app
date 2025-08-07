@@ -11,7 +11,6 @@ import { toast } from "sonner";
 import { supabase } from "@/lib/supabase/client";
 import { POPULAR_SKILLS, SKILL_CATEGORIES } from "@/lib/utils";
 
-
 type SkillCategory = keyof typeof SKILL_CATEGORIES | "other_skills";
 
 interface SkillsData {
@@ -40,7 +39,7 @@ const INITIAL_SKILLS: SkillsData = {
 
 const CATEGORY_ICONS = {
   programming_languages: "💻",
-  frameworks: "⚛️", 
+  frameworks: "⚛️",
   databases: "🗄️",
   cloud_platforms: "☁️",
   other_skills: "🛠️",
@@ -219,7 +218,9 @@ export function Skills({ onComplete, state, onPrevious }: StepProps) {
     return (
       <div className="space-y-8">
         <div className="max-w-2xl">
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Add Your Skills</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">
+            Add Your Skills
+          </h1>
           <p className="text-lg text-muted-foreground mt-2">
             Loading your existing skills...
           </p>
@@ -244,19 +245,24 @@ export function Skills({ onComplete, state, onPrevious }: StepProps) {
               <Code className="h-6 w-6 text-purple-600" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold tracking-tight text-foreground">Add Your Skills</h1>
+              <h1 className="text-3xl font-bold tracking-tight text-foreground">
+                Add Your Skills
+              </h1>
               <p className="text-lg text-muted-foreground">
-                Tell us about your technical skills and expertise. This helps us personalize your experience.
+                Tell us about your technical skills and expertise. This helps us
+                personalize your experience.
               </p>
             </div>
           </div>
-          
+
           <div className="p-4 bg-muted/30 rounded-lg border">
             <div className="flex items-center space-x-2 text-sm text-foreground">
               <Zap className="h-4 w-4 text-primary" />
               <span>
-                <span className="font-medium">{allSkills.length}</span> skill{allSkills.length !== 1 ? "s" : ""} added
-                {allSkills.length === 0 && " - Please add at least one skill to continue"}
+                <span className="font-medium">{allSkills.length}</span> skill
+                {allSkills.length !== 1 ? "s" : ""} added
+                {allSkills.length === 0 &&
+                  " - Please add at least one skill to continue"}
               </span>
             </div>
           </div>
@@ -267,10 +273,12 @@ export function Skills({ onComplete, state, onPrevious }: StepProps) {
       <div className="space-y-4">
         <div className="flex items-center space-x-2">
           <Lightbulb className="h-5 w-5 text-yellow-500" />
-          <h2 className="text-xl font-semibold text-foreground">Popular Skills</h2>
+          <h2 className="text-xl font-semibold text-foreground">
+            Popular Skills
+          </h2>
           <span className="text-sm text-muted-foreground">Click to add</span>
         </div>
-        
+
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
           {availablePopularSkills.map((skill) => (
             <Button
@@ -285,7 +293,7 @@ export function Skills({ onComplete, state, onPrevious }: StepProps) {
             </Button>
           ))}
         </div>
-        
+
         {availablePopularSkills.length === 0 && (
           <p className="text-sm text-muted-foreground italic">
             All popular skills have been added! Add custom skills below.
@@ -295,7 +303,10 @@ export function Skills({ onComplete, state, onPrevious }: StepProps) {
 
       {/* Custom Skill Input */}
       <div className="space-y-3">
-        <Label htmlFor="custom-skill" className="text-lg font-semibold text-foreground">
+        <Label
+          htmlFor="custom-skill"
+          className="text-lg font-semibold text-foreground"
+        >
           Add Custom Skill
         </Label>
         <form onSubmit={handleCustomSkillSubmit} className="flex space-x-3">
@@ -331,7 +342,7 @@ export function Skills({ onComplete, state, onPrevious }: StepProps) {
       {skillCategories.length > 0 && (
         <div className="space-y-6">
           <h2 className="text-xl font-semibold text-foreground">Your Skills</h2>
-          
+
           <div className="grid gap-6">
             {skillCategories.map(([category, categorySkills]) => {
               const categoryName = CATEGORY_NAMES[category];
@@ -341,12 +352,15 @@ export function Skills({ onComplete, state, onPrevious }: StepProps) {
                 <div key={category} className="space-y-3">
                   <div className="flex items-center space-x-2">
                     <span className="text-xl">{categoryIcon}</span>
-                    <h3 className="text-lg font-medium text-foreground">{categoryName}</h3>
+                    <h3 className="text-lg font-medium text-foreground">
+                      {categoryName}
+                    </h3>
                     <span className="text-sm text-muted-foreground">
-                      ({categorySkills.length} skill{categorySkills.length !== 1 ? "s" : ""})
+                      ({categorySkills.length} skill
+                      {categorySkills.length !== 1 ? "s" : ""})
                     </span>
                   </div>
-                  
+
                   <div className="flex flex-wrap gap-2">
                     {categorySkills.map((skill: string) => (
                       <Badge
@@ -380,8 +394,12 @@ export function Skills({ onComplete, state, onPrevious }: StepProps) {
           <div className="flex items-start space-x-3">
             <div className="text-destructive text-xl">⚠️</div>
             <div>
-              <p className="font-medium text-destructive">Unable to save skills</p>
-              <p className="text-sm text-destructive/80 mt-1">{skillsState.error}</p>
+              <p className="font-medium text-destructive">
+                Unable to save skills
+              </p>
+              <p className="text-sm text-destructive/80 mt-1">
+                {skillsState.error}
+              </p>
             </div>
           </div>
         </div>
